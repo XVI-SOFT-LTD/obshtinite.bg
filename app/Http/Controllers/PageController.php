@@ -46,6 +46,18 @@ class PageController extends Controller
     ;
     } */
 
+    public function municipality(string $id)
+    {
+
+        return view('pages.municipality');
+    }
+
+    public function area(string $id)
+    {
+
+        return view('pages.area');
+    }
+
     public function show(string $slug)
     {
         if (!$slug) {

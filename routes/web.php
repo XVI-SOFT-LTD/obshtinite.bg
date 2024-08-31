@@ -31,6 +31,9 @@ Route::get('/contacts', [PageController::class, 'contacts'])->name('contacts');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
 
+Route::get('/obshtinite/{id}', [PageController::class, 'municipality'])->name('municipality');
+Route::get('/oblasti/{id}', [PageController::class, 'area'])->name('area');
+
 /* OLD */
 
 Route::get('/category', [HomeController::class, 'category'])->name('category');

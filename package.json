@@ -25,8 +25,8 @@
         "jquery": "^3.7.1",
         "nestable": "^0.2.0",
         "nprogress": "^0.2.0",
-        "prod": "^1.0.1",
-        "rollup-plugin-copy": "^3.5.0",
+        "prod": "^1.0.0",
+        "rollup-plugin-copy": "^2.0.1",
         "tinymce": "^7.0.1",
         "toastr": "^2.1.4"
     }

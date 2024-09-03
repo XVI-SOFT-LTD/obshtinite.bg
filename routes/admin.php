@@ -2,13 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\MenuController;
-use App\Http\Controllers\Admin\DeveloperController;
-use App\Http\Controllers\Admin\AdminStaticPageController;
-use App\Http\Controllers\Admin\AdminNewsController;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\AdminCategoryController;
-use App\Http\Controllers\Admin\AdminAuthorController;
 use App\Http\Controllers\Admin\AdminAjaxController;
+use App\Http\Controllers\Admin\AdminNewsController;
+use App\Http\Controllers\Admin\DeveloperController;
+use App\Http\Controllers\Admin\AdminAuthorController;
+use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminStaticPageController;
+use App\Http\Controllers\Admin\AdminPartliamentaryGroupController;
 
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index']);
@@ -37,6 +38,9 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     /* Authors */
     Route::resource('authors', AdminAuthorController::class)->except(['show'])->except(['update']);
     Route::put('authors/{id}', [AdminAuthorController::class, 'update'])->name('authors.update');
+
+     /* Paliamentary Group */
+    Route::resource('parties', AdminPartliamentaryGroupController::class)->except(['show', 'update']);
 
     /* AJAX REQUESTS */
     Route::any('/ajax/uploadImageTinymce', [AdminAjaxController::class, 'uploadImageTinymceORIGINAL']);

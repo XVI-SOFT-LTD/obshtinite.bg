@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Helpers\Helper;
 use App\Http\Traits\I18n;
 use Illuminate\Http\Request;
-use App\Models\ParliamentaryGroup;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ParliamentaryGroupGallery;
 use Illuminate\Database\Eloquent\Collection;
@@ -19,7 +18,7 @@ class ParliamentaryGroup extends Model
 {
     use HasFactory, I18n, SoftDeletes;
 
-    const DIR = 'parliamentary_groups';
+    const DIR = 'parliamentary_group';
     const DIR_GALLERY = 'gallery';
 
     // cover sizes
@@ -42,7 +41,7 @@ class ParliamentaryGroup extends Model
      * The ParliamentaryGroup model represents a parliamentary group in the application.
      * It is associated with the 'parliamentary_groups' database table.
      */
-    protected $table = 'parliamentary_groups';
+    protected $table = 'parliamentary_group';
 
     /**
      * The `ParliamentaryGroup` model represents a parliamentary group in the application.

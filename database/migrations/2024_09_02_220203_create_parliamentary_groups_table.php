@@ -11,15 +11,14 @@ class CreateParliamentaryGroupsTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('parliamentary_groups', function (Blueprint $table) {
+        Schema::create('parliamentary_group', function (Blueprint $table) {
             $table->id();
             $table->string('logo', 250)->nullable()->comment('Лого на парламентарната група');
             $table->string('slug')->comment('Секретно име на партията');
             $table->date('founding_date')->comment('Дата на основаване на партията');
             $table->string('headquarters_address')->comment('Адрес на централата на партията');
-            $table->integer('seats_in_parliament')->comment('Брой места, които партията заема в парламента');
+            $table->integer('seats_in_parliament')->nullable()->comment('Брой места, които партията заема в парламента');
             $table->string('website')->nullable()->comment('Уебсайт на партията');
-            $table->string('founder_name')->comment('Име на основателя на партията');
             $table->string('contact_email')->nullable()->comment('Имейл за контакт');
             $table->string('contact_phone')->nullable()->comment('Телефон за контакт');
             $table->json('social_media_links')->nullable()->comment('Линкове към социалните мрежи');
@@ -43,6 +42,7 @@ class CreateParliamentaryGroupsTable extends Migration
             $table->unsignedBigInteger('language_id')->unsigned()->nullable(true);
             $table->string('name', 250)->comment('Преведено име на партията');
             $table->string('leader_name')->comment('Име на лидер на партията');
+            $table->string('founder_name')->nullable()->comment('Име на основателя на партията');
             $table->text('description')->nullable()->comment('Описание');
             $table->timestamps();
             $table->softDeletes();
@@ -60,23 +60,23 @@ class CreateParliamentaryGroupsTable extends Migration
             $table->softDeletes();
         });
 
-        Schema::table('parliamentary_groups', function (Blueprint $table) {
+        Schema::table('parliamentary_group', function (Blueprint $table) {
             $table->foreign('created_by')->references('id')->on('users');
             $table->foreign('updated_by')->references('id')->on('users');
         });
 
         Schema::table('parliamentary_group_i18n', function (Blueprint $table) {
-            $table->foreign('parliamentary_group_id')->references('id')->on('parliamentary_groups');
+            $table->foreign('parliamentary_group_id')->references('id')->on('parliamentary_group');
             $table->foreign('language_id')->references('id')->on('languages');
         });
 
          Schema::table('affiliated_p_pg', function (Blueprint $table) {
-            $table->foreign('parliamentary_group_id')->references('id')->on('parliamentary_groups')->onDelete('cascade');
-            $table->foreign('affiliated_party_id')->references('id')->on('parliamentary_groups')->onDelete('cascade');
+            $table->foreign('parliamentary_group_id')->references('id')->on('parliamentary_group')->onDelete('cascade');
+            $table->foreign('affiliated_party_id')->references('id')->on('parliamentary_group')->onDelete('cascade');
         });
 
         Schema::table('parliamentary_group_gallery', function (Blueprint $table) {
-            $table->foreign('parliamentary_group_id')->references('id')->on('parliamentary_groups')->onDelete('cascade');
+            $table->foreign('parliamentary_group_id')->references('id')->on('parliamentary_group')->onDelete('cascade');
         });
     }
 
@@ -104,7 +104,7 @@ class CreateParliamentaryGroupsTable extends Migration
             $table->dropForeign(['updated_by']);
         });
         
-        Schema::dropIfExists('parliamentary_groups');
+        Schema::dropIfExists('parliamentary_group');
         Schema::dropIfExists('affiliated_p_pg');
         Schema::dropIfExists('parliamentary_group_i18n');
         Schema::dropIfExists('parliamentary_group_gallery');

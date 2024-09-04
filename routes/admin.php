@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\DeveloperController;
 use App\Http\Controllers\Admin\AdminAuthorController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminStaticPageController;
-use App\Http\Controllers\Admin\AdminPartliamentaryGroupController;
+use App\Http\Controllers\Admin\AdminParliamentaryGroupController;
 
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index']);
@@ -40,7 +40,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::put('authors/{id}', [AdminAuthorController::class, 'update'])->name('authors.update');
 
      /* Paliamentary Group */
-    Route::resource('parties', AdminPartliamentaryGroupController::class)->except(['show', 'update']);
+    Route::resource('parties', AdminParliamentaryGroupController::class)->except(['show', 'update']);
 
     /* AJAX REQUESTS */
     Route::any('/ajax/uploadImageTinymce', [AdminAjaxController::class, 'uploadImageTinymceORIGINAL']);

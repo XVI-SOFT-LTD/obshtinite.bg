@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ParliamentaryGroupI18n extends Model
+class ParliamentaryGroup_i18n extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -16,7 +16,7 @@ class ParliamentaryGroupI18n extends Model
      *
      * This class represents the model for the 'parliamentary_groups_i18n' table.
      */
-    protected $table = 'parliamentary_groups_i18n';
+    protected $table = 'parliamentary_group_i18n';
 
     /**
      * Model: ParliamentaryGroupI18n

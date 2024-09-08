@@ -62,6 +62,10 @@ class ParliamentaryGroup extends Model
         'updated_by'
     ];
 
+    protected $casts = [
+        'social_media_links' => 'array',
+    ];
+
     /**
      * Get the affiliated parties associated with the parliamentary group.
      *

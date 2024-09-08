@@ -103,7 +103,7 @@ class AdminParliamentaryGroupController extends AdminController
         
         $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
         $requestData['founding_date'] = $requestData['founding_date'] ? date('Y-m-d H:i:s', strtotime($requestData['founding_date'])) : null;
-        $requestData['social_media_links'] = json_encode($requestData['social_media_links']);
+        // $requestData['social_media_links'] = json_encode($requestData['social_media_links']);
         
         DB::transaction(function () use ($requestData, $request) {
             $parliamentaryGroup = $this->model->create($requestData);
@@ -143,8 +143,6 @@ class AdminParliamentaryGroupController extends AdminController
     public function edit(int $id): View
     {
         $parliamentaryGroup = $this->model::findOrFail($id);
-        
-        $socialMediaLinks = json_decode($parliamentaryGroup->social_media_links, true);
 
         /* breadcrumbs */
         $title = 'Редакция на ' . $this->singularPageTitle;
@@ -159,7 +157,6 @@ class AdminParliamentaryGroupController extends AdminController
             ->with('dir', $parliamentaryGroup->getDir())
             ->with('size', ParliamentaryGroup::MAIN_SIZE)
             ->with('routes', $this->routes)
-            ->with('socialMediaLinks', $socialMediaLinks)
             ->with('affiliatedParties', $affiliatedParties)
             ->with('selectedAffiliatedParties', $selectedAffiliatedParties ?? [])
             ->with('pageTitle', $title);

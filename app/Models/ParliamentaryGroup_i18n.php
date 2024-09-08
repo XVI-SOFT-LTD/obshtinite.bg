@@ -14,7 +14,7 @@ class ParliamentaryGroup_i18n extends Model
      *
      * Class ParliamentaryGroupI18n
      *
-     * This class represents the model for the 'parliamentary_groups_i18n' table.
+     * This class represents the model for the 'parliamentary_group_i18n' table.
      */
     protected $table = 'parliamentary_group_i18n';
 

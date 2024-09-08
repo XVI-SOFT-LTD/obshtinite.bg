@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Helpers\Helper;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
 use App\Models\ParliamentaryGroup;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\Factory;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
 use App\Http\Requests\Admin\AdminParliamentaryGroupRequest;
+use App\Models\AffiliatedParliamentaryGroup;
 
 class AdminParliamentaryGroupController extends AdminController
 {
@@ -68,6 +73,11 @@ class AdminParliamentaryGroupController extends AdminController
         return $dataTable->render($this->pluralPageTitle);
     }
 
+    /**
+     * Create a new parliamentary group.
+     *
+     * @return Factory|View
+     */
     public function create()
     {
         /* breadcrumbs */
@@ -75,10 +85,13 @@ class AdminParliamentaryGroupController extends AdminController
         $breadcrumbs = $this->basicBreadcrumbs;
         $breadcrumbs[] = ['text' => $title];
 
+        $affiliatedParties = ParliamentaryGroup::getForSelectAdmin();
 
         return view('admin.partials._form_create_custom')
             ->with('routes', $this->routes)
             ->with('breadcrumbs', $breadcrumbs)
+            ->with('affiliatedParties', $affiliatedParties)
+            ->with('selectedAffiliatedParties', [])
             ->with('pageTitle', $title);
     }
 
@@ -112,8 +125,141 @@ class AdminParliamentaryGroupController extends AdminController
                 );
             }
 
+            if ($request->has('related_parties')) {
+                $this->addRelatedIds($request->get('related_parties'), $parliamentaryGroup->id);
+            }
+
         });
 
         return redirect()->route($this->routes . '.index')->with('success', 'Успешно добавена ' . $this->singularPageTitle);
+    }
+
+    /**
+     * Edit a parliamentary group.
+     *
+     * @param int $id The ID of the parliamentary group to edit.
+     * @return View The view for editing the parliamentary group.
+     */
+    public function edit(int $id): View
+    {
+        $parliamentaryGroup = $this->model::findOrFail($id);
+        
+        $socialMediaLinks = json_decode($parliamentaryGroup->social_media_links, true);
+
+        /* breadcrumbs */
+        $title = 'Редакция на ' . $this->singularPageTitle;
+        $breadcrumbs = $this->basicBreadcrumbs;
+        $breadcrumbs[] = ['text' => $title];
+
+        $affiliatedParties = ParliamentaryGroup::getForSelectAdmin($id);
+        $selectedAffiliatedParties = (new AffiliatedParliamentaryGroup)->getRelatedAssoc($id);
+
+        return view('admin.partials._form_edit_custom')
+            ->with('object', $parliamentaryGroup)
+            ->with('dir', $parliamentaryGroup->getDir())
+            ->with('size', ParliamentaryGroup::MAIN_SIZE)
+            ->with('routes', $this->routes)
+            ->with('socialMediaLinks', $socialMediaLinks)
+            ->with('affiliatedParties', $affiliatedParties)
+            ->with('selectedAffiliatedParties', $selectedAffiliatedParties ?? [])
+            ->with('pageTitle', $title);
+    }
+
+    /**
+     * Update a parliamentary group.
+     *
+     * @param AdminParliamentaryGroupRequest $request The request object.
+     * @param int $id The ID of the parliamentary group.
+     * @return RedirectResponse The redirect response.
+     */
+    public function update(AdminParliamentaryGroupRequest $request, int $id): RedirectResponse
+    {
+        if (!$id) {
+            return redirect()->back();
+        }
+
+        $requestData = $request->all();
+        $requestData['updated_by'] = auth()->user()->id;
+
+        $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
+        $requestData['founding_date'] = $requestData['founding_date'] ? date('Y-m-d H:i:s', strtotime($requestData['founding_date'])) : null;
+
+        if ($request->has('delete_logo')) {
+            $requestData['logo'] = null;
+        }
+
+        if ($request->has('delete_gallery')) {
+            DB::table('parliamentary_group_gallery')->whereIn('id', $request->get('delete_gallery'))->update(['deleted_at' => now()]);
+            $requestData['gallery'] = null;
+        }
+
+        if ($request->hasFile('logo')) {
+            $requestData['logo'] = $this->uploadImage($request->file('logo'), $id, ParliamentaryGroup::DIR, ParliamentaryGroup::SIZES);
+        }
+
+        DB::transaction(function () use ($requestData, $request, $id) {
+            $parliamentaryGroup = $this->model->findOrFail($id);
+            $parliamentaryGroup->update($requestData);
+
+            $this->updateI18n($id, 'parliamentary_group_id', $this->i18nTable, $requestData['i18n']);
+
+            if ($request->hasFile('gallery')) {
+                $this->uploadGallery(
+                    $request->file('gallery'),
+                    $parliamentaryGroup->id,
+                    'parliamentary_group_gallery',
+                    'parliamentary_group_id',
+                    ParliamentaryGroup::DIR_GALLERY,
+                    ParliamentaryGroup::SIZES_GALLERY
+                );
+            }
+
+            if ($request->has('related_parties')) {
+                $this->addRelatedIds($request->get('related_parties'), $id);
+            } else {
+                AffiliatedParliamentaryGroup::where('parliamentary_group_id', $id)->delete();
+            }
+
+        });
+
+        return redirect()->back()->with('success', 'Успешно редактирана ' . $this->singularPageTitle);
+    }
+
+    /**
+     * Delete a record from the database.
+     *
+     * @param int $id The ID of the record to be deleted.
+     * @return JsonResponse The JSON response indicating the status of the deletion.
+     */
+    public function destroy(int $id)
+    {
+        try {
+            $record = $this->model::findOrFail($id);
+            $record->delete();
+            return response()->json(['status' => 'success', 'message' => 'Записът беше успешно изтрит.']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Записът не може да бъде изтрит.']);
+        }
+    }
+
+    /**
+     * Add related IDs to the affiliated parliamentary group.
+     *
+     * @param array $affiliatedPartyId The array of affiliated party IDs.
+     * @param int $parliamentaryGroupId The ID of the parliamentary group.
+     * @return void
+     */
+    public function addRelatedIds(array $affiliatedPartyId, int $parliamentaryGroupId)
+    {
+        AffiliatedParliamentaryGroup::where('parliamentary_group_id', $parliamentaryGroupId)->delete();
+
+        foreach ($affiliatedPartyId as $relatedId) {
+            AffiliatedParliamentaryGroup::insert([
+                'parliamentary_group_id' => $parliamentaryGroupId,
+                'affiliated_party_id' => $relatedId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }

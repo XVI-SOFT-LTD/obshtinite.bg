@@ -41,6 +41,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
 
      /* Paliamentary Group */
     Route::resource('parties', AdminParliamentaryGroupController::class)->except(['show', 'update']);
+    Route::put('parties/{id}', [AdminParliamentaryGroupController::class, 'update'])->name('parties.update');
 
     /* AJAX REQUESTS */
     Route::any('/ajax/uploadImageTinymce', [AdminAjaxController::class, 'uploadImageTinymceORIGINAL']);

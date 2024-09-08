@@ -1,7 +1,3 @@
-@php
-    $socialMediaLinks = json_decode($parliamentaryGroup->social_media_links ?? '{}', true);
-@endphp
-
 @include('admin.developer.fields._input', [
     'label' => 'Телефон за контакт',
     'id' => 'contact_phone',
@@ -93,7 +89,6 @@
     'value' => old('logo', $object->logo ?? null),
     'line' => true,
     'hint' => 'Главна снимка на партията',
-    'required' => true,
 ])
 
 @include('admin.developer.fields._gallery', [
@@ -104,6 +99,18 @@
     'line' => true,
     'hint' => 'Може да качите няколко изображения наведнъж',
 ])
+
+@include('admin.developer.fields._textarea_autocomplete', [
+    'label' => 'Коалиционни партии',
+    'placeholder' => 'Изберете партии от списъка',
+    'id' => 'autocomplete_parties',
+    'name' => 'related_parties',
+    'required' => false,
+    'items' => $affiliatedParties,
+    'selected' => $selectedAffiliatedParties,
+    'line' => true,
+])
+
 
 @include('admin.developer.fields._checkbox', [
     'label' => 'Активна',

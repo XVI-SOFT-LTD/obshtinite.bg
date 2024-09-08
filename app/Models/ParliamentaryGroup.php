@@ -39,26 +39,12 @@ class ParliamentaryGroup extends Model
     /**
      *
      * The ParliamentaryGroup model represents a parliamentary group in the application.
-     * It is associated with the 'parliamentary_groups' database table.
+     * It is associated with the 'parliamentary_group' database table.
      */
     protected $table = 'parliamentary_group';
 
     /**
      * The `ParliamentaryGroup` model represents a parliamentary group in the application.
-     *
-     * @property string $logo The logo of the parliamentary group.
-     * @property string $slug The slug of the parliamentary group.
-     * @property string $founding_date The founding date of the parliamentary group.
-     * @property string $headquarters_address The headquarters address of the parliamentary group.
-     * @property int $seats_in_parliament The number of seats the parliamentary group has in the parliament.
-     * @property string $website The website of the parliamentary group.
-     * @property string $founder_name The name of the founder of the parliamentary group.
-     * @property string $contact_email The contact email of the parliamentary group.
-     * @property string $contact_phone The contact phone number of the parliamentary group.
-     * @property array $social_media_links The social media links of the parliamentary group.
-     * @property bool $active Indicates if the parliamentary group is active.
-     * @property int $created_by The ID of the user who created the parliamentary group.
-     * @property int $updated_by The ID of the user who last updated the parliamentary group.
      */
     protected $fillable = [
         'logo',
@@ -145,5 +131,21 @@ class ParliamentaryGroup extends Model
         $builder->orderBy('id', 'desc');
 
         return $builder->get();
+    }
+
+    /**
+     * Retrieve the parliamentary groups for admin selection.
+     *
+     * @param int $excludeId The ID of the parliamentary group to exclude (optional).
+     * @return Collection
+     */
+    public static function getForSelectAdmin(int $excludeId = 0)
+    {
+        return self::with(['i18n' => function ($query) {
+            $query->select('parliamentary_group_id', 'name')->orderBy('name', 'asc');
+        }])
+            ->where('id', '!=', $excludeId)
+            ->orderBy('id', 'desc')
+            ->get();
     }
 }

@@ -13,12 +13,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ParliamentaryGroupGallery extends Model
 {
     use HasFactory, SoftDeletes;
+    
+    /**
+     *
+     * The ParliamentaryGroupGallery model represents the parliamentary group gallery table in the database.
+     */
+    protected $table = 'parliamentary_group_gallery';
 
+
+    /**
+     * The directory path for the parliamentary group gallery.
+     */
     protected $fillable = [
         'parliamentary_group_id',
         'filename',
         'sortorder'
     ];
+
+    public function book()
+    {
+        return $this->belongsTo(ParliamentaryGroup::class);
+    }
 
     /**
      * Get the parliamentary group associated with the parliamentary group gallery.

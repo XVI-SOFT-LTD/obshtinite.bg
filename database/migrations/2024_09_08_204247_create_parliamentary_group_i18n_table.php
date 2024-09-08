@@ -19,6 +19,7 @@ class CreateParliamentaryGroupI18nTable extends Migration
             $table->string('leader_name')->comment('Име на лидер на партията');
             $table->string('founder_name')->nullable()->comment('Име на основателя на партията');
             $table->text('description')->nullable()->comment('Описание');
+            $table->string('headquarters_address')->comment('Адрес на централата на партията');
             $table->timestamps();
             $table->softDeletes();
         });

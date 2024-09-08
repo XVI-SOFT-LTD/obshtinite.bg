@@ -20,7 +20,6 @@ class ParliamentaryGroupGallery extends Model
      */
     protected $table = 'parliamentary_group_gallery';
 
-
     /**
      * The directory path for the parliamentary group gallery.
      */
@@ -29,11 +28,6 @@ class ParliamentaryGroupGallery extends Model
         'filename',
         'sortorder'
     ];
-
-    public function book()
-    {
-        return $this->belongsTo(ParliamentaryGroup::class);
-    }
 
     /**
      * Get the parliamentary group associated with the parliamentary group gallery.

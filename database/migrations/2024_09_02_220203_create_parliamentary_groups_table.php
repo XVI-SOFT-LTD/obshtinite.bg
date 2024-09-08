@@ -16,7 +16,6 @@ class CreateParliamentaryGroupsTable extends Migration
             $table->string('logo', 250)->nullable()->comment('Лого на парламентарната група');
             $table->string('slug')->comment('Секретно име на партията');
             $table->date('founding_date')->comment('Дата на основаване на партията');
-            $table->string('headquarters_address')->comment('Адрес на централата на партията');
             $table->integer('seats_in_parliament')->nullable()->comment('Брой места, които партията заема в парламента');
             $table->string('website')->nullable()->comment('Уебсайт на партията');
             $table->string('contact_email')->nullable()->comment('Имейл за контакт');

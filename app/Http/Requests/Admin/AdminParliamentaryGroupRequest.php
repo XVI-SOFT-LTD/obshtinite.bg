@@ -18,7 +18,7 @@ class AdminParliamentaryGroupRequest extends AdminFormRequest
             'founding_date' => 'required|date',
             'social_media_links' => 'array',
             'logo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:4096',
-            'headquarters_address' => 'required|max:255',
+            'i18n.1.headquarters_address' => 'required|max:255',
         ];
 
         return $rules;

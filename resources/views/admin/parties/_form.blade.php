@@ -18,16 +18,6 @@
     'line' => true,
 ])
 
-@include('admin.developer.fields._input', [
-    'label' => 'Адрес',
-    'id' => 'headquarters_address',
-    'name' => 'headquarters_address',
-    'required' => true,
-    'value' => old('headquarters_address', $object->headquarters_address ?? null),
-    'hint' => 'Адрес на централата на партията',
-    'line' => true,
-])
-
 @include('admin.developer.fields._number_input', [
     'label' => 'Брой места в парламента',
     'id' => 'seats_in_parliament',

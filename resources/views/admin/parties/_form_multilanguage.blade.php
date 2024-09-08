@@ -38,6 +38,16 @@
     'line' => true,
 ])
 
+@include('admin.developer.fields._input', [
+    'label' => 'Адрес [' . $language->code . ']',
+    'id' => 'i18n[' . $language->id . '][headquarters_address]',
+    'name' => 'i18n[' . $language->id . '][headquarters_address]',
+    'required' => true,
+    'value' => old('i18n.' . $language->id . '.headquarters_address', $i18n ? $i18n[$language->id]->headquarters_address : ''),
+    'hint' => 'Адрес на централата на партията',
+    'line' => true,
+])
+
 
 @include('admin.developer.fields._textarea', [
     'label' => 'Описание [' . $language->code . ']',

@@ -4,14 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateMunicipalitiesGalleriesTable extends Migration
 {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('municipality_gallery', function (Blueprint $table) {
+        Schema::create('municipalities_gallery', function (Blueprint $table) {
             $table->id();
 
             $table->unsignedBigInteger('municipality_id')->unsigned()->nullable(false);
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::table('municipality_gallery', function (Blueprint $table) {
+        Schema::table('municipalities_gallery', function (Blueprint $table) {
             $table->foreign('municipality_id')->references('id')->on('municipalities')->onDelete('cascade');
         });
     }
@@ -33,10 +33,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('municipality_gallery', function (Blueprint $table) {
+        Schema::table('municipalities_gallery', function (Blueprint $table) {
             $table->dropForeign(['municipality_id']);
         });
         
-        Schema::dropIfExists('municipality_gallery');
+        Schema::dropIfExists('municipalities_gallery');
     }
 };

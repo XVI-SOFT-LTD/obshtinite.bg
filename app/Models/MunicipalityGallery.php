@@ -14,7 +14,7 @@ class MunicipalityGallery extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'municipality_gallery';
+    protected $table = 'municipalities_gallery';
 
     protected $fillable = [
         'municipality_id',

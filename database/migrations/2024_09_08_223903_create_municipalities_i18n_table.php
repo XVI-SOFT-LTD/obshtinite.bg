@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMunicipalityI18nTable extends Migration
+class CreateMunicipalitiesI18nTable extends Migration
 {
     /**
      * Run the migrations.
@@ -18,6 +18,7 @@ class CreateMunicipalityI18nTable extends Migration
             $table->string('name')->comment('Име на общината');
             $table->text('description')->nullable()->comment('Описание на общината');
             $table->string('address')->nullable()->comment('Адрес на общината');
+            $table->json('keywords')->nullable()->comment('Ключови думи');
             $table->timestamps();
             $table->softDeletes();
 

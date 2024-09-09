@@ -11,7 +11,7 @@ class Municipality_i18n extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'municipality_i18n';
+    protected $table = 'municipalities_i18n';
 
     protected $fillable = [
         'municipality_id',

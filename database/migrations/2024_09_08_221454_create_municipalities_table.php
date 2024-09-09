@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMunicipalityTable extends Migration
+class CreateMunicipalitiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -24,9 +24,8 @@ class CreateMunicipalityTable extends Migration
             $table->integer('position')->unsigned()->nullable()->default(0)->comment('Позиция на общината');
             $table->json('working_hours')->nullable()->comment('Работно време');
             $table->json('social_media_links')->nullable()->comment('Линкове към социалните мрежи');
-            $table->json('keywords')->nullable()->comment('Ключови думи');
-            $table->date('active_from')->nullable()->comment('Активно от');
-            $table->date('active_to')->nullable()->comment('Активно до');
+            $table->dateTime('active_from')->nullable()->comment('Активно от');
+            $table->dateTime('active_to')->nullable()->comment('Активно до');
             $table->boolean('active')->unsigned()->nullable()->default(1)->comment('Статус на партията');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();

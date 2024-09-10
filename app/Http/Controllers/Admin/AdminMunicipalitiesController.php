@@ -7,8 +7,10 @@ use App\Models\Municipality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\DynamicAdminDataTable;
 use App\Http\Requests\Admin\AdminMunicipalitiesRequest;
 
 class AdminMunicipalitiesController extends AdminController
@@ -31,6 +33,12 @@ class AdminMunicipalitiesController extends AdminController
         ];
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @return View
+     */
     public function index(Request $request)
     {
         $municipilities = $this->model->getAdminAll($request);
@@ -82,6 +90,12 @@ class AdminMunicipalitiesController extends AdminController
             ->with('pageTitle', $title);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param AdminMunicipalitiesRequest $request The request object.
+     * @return RedirectResponse The redirect response.
+     */
     public function store(AdminMunicipalitiesRequest $request)
     {
         $requestData = $request->all();
@@ -138,5 +152,78 @@ class AdminMunicipalitiesController extends AdminController
             ->with('size', Municipality::MAIN_SIZE)
             ->with('routes', $this->routes)
             ->with('pageTitle', $title);
+    }
+
+    /**
+     * Update a municipality.
+     *
+     * @param AdminMunicipalitiesRequest $request The request object.
+     * @param int $id The ID of the municipality to update.
+     * @return RedirectResponse The redirect response.
+     */
+    public function update(AdminMunicipalitiesRequest $request, int $id): RedirectResponse
+    {
+        if (!$id) {
+            return redirect()->back();
+        }
+
+        $requestData = $request->all();
+        $requestData['updated_by'] = auth()->user()->id;
+
+        $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
+        $requestData['active_from'] = $requestData['active_from'] ? date('Y-m-d H:i:s', strtotime($requestData['active_from'])) : null;
+        $requestData['active_to'] = $requestData['active_to'] ? date('Y-m-d H:i:s', strtotime($requestData['active_to'])) : null;
+        $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
+
+        if ($request->has('delete_logo')) {
+            $requestData['logo'] = null;
+        }
+
+        if ($request->has('delete_gallery')) {
+            DB::table('municipalities_gallery')->whereIn('id', $request->get('delete_gallery'))->update(['deleted_at' => now()]);
+            $requestData['gallery'] = null;
+        }
+
+        if ($request->hasFile('logo')) {
+            $requestData['logo'] = $this->uploadImage($request->file('logo'), $id, Municipality::DIR, Municipality::SIZES);
+        }
+
+        DB::transaction(function () use ($requestData, $request, $id) {
+            $municipility = $this->model->findOrFail($id);
+            $municipility->update($requestData);
+
+            $this->updateI18n($id, 'municipality_id', $this->i18nTable, $requestData['i18n']);
+
+            if ($request->hasFile('gallery')) {
+                $this->uploadGallery(
+                    $request->file('gallery'),
+                    $municipility->id,
+                    'municipalities_gallery',
+                    'municipality_id',
+                    Municipality::DIR_GALLERY,
+                    Municipality::SIZES_GALLERY
+                );
+            }
+
+        });
+
+        return redirect()->back()->with('success', 'Успешно редактирана ' . $this->singularPageTitle);
+    }
+
+    /**
+     * Delete a record from the database.
+     *
+     * @param int $id The ID of the record to be deleted.
+     * @return JsonResponse The JSON response indicating the status of the deletion.
+     */
+    public function destroy(int $id)
+    {
+        try {
+            $record = $this->model::findOrFail($id);
+            $record->delete();
+            return response()->json(['status' => 'success', 'message' => 'Записът беше успешно изтрит.']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Записът не може да бъде изтрит.']);
+        }
     }
 }

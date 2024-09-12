@@ -48,7 +48,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     /* Municipalities */
     Route::resource('municipalities', AdminMunicipalitiesController::class)->except(['show', 'update']);
     Route::put('municipalities/{id}', [AdminMunicipalitiesController::class, 'update'])->name('municipalities.update');
-     /* Paliamentary Group */
+    
+    /* Paliamentary Group */
     Route::resource('parties', AdminParliamentaryGroupController::class)->except(['show', 'update']);
     Route::put('parties/{id}', [AdminParliamentaryGroupController::class, 'update'])->name('parties.update');
 

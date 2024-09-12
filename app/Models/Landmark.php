@@ -126,4 +126,15 @@ class Landmark extends Model
 
         return $builder->get();
     }
+
+    /**
+     * Retrieve the ID of the related municipality for a given landmark.
+     *
+     * @param int $landmarkId The ID of the landmark.
+     * @return int The ID of the related municipality.
+     */
+    public function getRelatedMunicipality(int $landmarkId): int
+    {
+        return $this->where('id', $landmarkId)->pluck('municipality_id', 'id')->first();
+    }
 }

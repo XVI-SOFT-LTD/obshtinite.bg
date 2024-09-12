@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLandmarksTableI18n extends Migration
+class CreateLandmarksI18nTable extends Migration
 {
     /**
      * Run the migrations.

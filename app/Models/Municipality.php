@@ -7,6 +7,7 @@ use App\Http\Traits\I18n;
 use Illuminate\Http\Request;
 use App\Models\MunicipalityGallery;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -136,5 +137,21 @@ class Municipality extends Model
         $builder->orderBy('id', 'desc');
 
         return $builder->get();
+    }
+
+    /**
+     * Retrieve the municipalities for the admin select dropdown.
+     *
+     * @return Collection
+     */
+    public static function getMunicipalitiesForSelectAdmin(): Collection
+    {
+        return self::with(['i18n' => function ($query) {
+            $query->select('municipality_id', 'name')->orderBy('name', 'asc');
+        }])
+            ->where('active', 1)
+            ->whereNull('deleted_at')
+            ->orderBy('id', 'desc')
+            ->get();
     }
 }

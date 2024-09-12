@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\DeveloperController;
 use App\Http\Controllers\Admin\AdminAuthorController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminStaticPageController;
+use App\Http\Controllers\Admin\AdminMunicipalitiesController;
 use App\Http\Controllers\Admin\AdminParliamentaryGroupController;
 
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
@@ -39,6 +40,9 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::resource('authors', AdminAuthorController::class)->except(['show'])->except(['update']);
     Route::put('authors/{id}', [AdminAuthorController::class, 'update'])->name('authors.update');
 
+    /* Municipalities */
+    Route::resource('municipalities', AdminMunicipalitiesController::class)->except(['show', 'update']);
+    Route::put('municipalities/{id}', [AdminMunicipalitiesController::class, 'update'])->name('municipalities.update');
      /* Paliamentary Group */
     Route::resource('parties', AdminParliamentaryGroupController::class)->except(['show', 'update']);
     Route::put('parties/{id}', [AdminParliamentaryGroupController::class, 'update'])->name('parties.update');

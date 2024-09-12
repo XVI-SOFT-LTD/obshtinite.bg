@@ -44,7 +44,7 @@ trait FileUploadTrait
         return $filename;
     }
 
-    public function uploadGallery(array $images, int $id, string $dir, $sizes = [])
+    public function uploadGallery(array $images, int $id, string $tableName, string $foreignIdColumn, string $dir, $sizes = [])
     {
         if (empty($images)) {
             return [];
@@ -54,8 +54,8 @@ trait FileUploadTrait
         foreach ($images as $image) {
             $filename = $this->uploadImage($image, $id, $dir, $sizes);
             if ($filename) {
-                DB::table("news_gallery")->insert([
-                    'news_id' => $id,
+                DB::table($tableName)->insert([
+                    $foreignIdColumn => $id,
                     'filename' => $filename,
                     'sortorder' => $sortorder,
                     'created_at' => date('Y-m-d H:i:s'),

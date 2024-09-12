@@ -99,6 +99,7 @@
     'items' => $affiliatedParties,
     'selected' => $selectedAffiliatedParties,
     'line' => true,
+    'multiple' => true,
 ])
 
 

@@ -89,6 +89,7 @@
     'items' => $authors,
     'selected' => $selectedAuthors,
     'line' => true,
+    'multiple' => true,
 ])
 
 @include('admin.developer.fields._textarea_autocomplete', [
@@ -100,4 +101,5 @@
     'items' => $relatedNews,
     'selected' => $selectedRelatedNews,
     'line' => true,
+    'multiple' => true,
 ])

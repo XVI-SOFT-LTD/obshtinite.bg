@@ -37,7 +37,7 @@
     'line' => true,
     'required' => false,
 ])
-{{-- @dump($object->social_media_links) --}}
+
 @include('admin.developer.fields._social_media_input', [
     'label' => 'Facebook',
     'id' => 'social_media_facebook',
@@ -97,6 +97,19 @@
     'items' => ,
     'selected' => ,
     'line' => true,
+    'multiple' => false,
+]) --}}
+
+{{-- @include('admin.developer.fields._textarea_autocomplete', [
+    'label' => 'Област',
+    'placeholder' => 'Изберете Област от списъка',
+    'id' => 'area_id',
+    'name' => 'area_id',
+    'required' => true,
+    'items' => $areas,
+    'selected' => $selectedArea,
+    'line' => true,
+    'multiple' => false,
 ]) --}}
 
 @include('admin.developer.fields._input', [

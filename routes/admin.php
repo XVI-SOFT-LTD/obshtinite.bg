@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminAjaxController;
+use App\Http\Controllers\Admin\AdminLandmarksController;
 use App\Http\Controllers\Admin\AdminNewsController;
 use App\Http\Controllers\Admin\DeveloperController;
 use App\Http\Controllers\Admin\AdminAuthorController;
@@ -40,10 +41,15 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::resource('authors', AdminAuthorController::class)->except(['show'])->except(['update']);
     Route::put('authors/{id}', [AdminAuthorController::class, 'update'])->name('authors.update');
 
+    /* Landmarks */
+    Route::resource('landmarks', AdminLandmarksController::class)->except(['show', 'update']);
+    Route::put('landmarks/{id}', [AdminLandmarksController::class, 'update'])->name('landmarks.update');
+    
     /* Municipalities */
     Route::resource('municipalities', AdminMunicipalitiesController::class)->except(['show', 'update']);
     Route::put('municipalities/{id}', [AdminMunicipalitiesController::class, 'update'])->name('municipalities.update');
-     /* Paliamentary Group */
+    
+    /* Paliamentary Group */
     Route::resource('parties', AdminParliamentaryGroupController::class)->except(['show', 'update']);
     Route::put('parties/{id}', [AdminParliamentaryGroupController::class, 'update'])->name('parties.update');
 

@@ -131,7 +131,14 @@ class AdminNewsController extends AdminController
             }
 
             if ($request->hasFile('gallery')) {
-                $this->uploadGallery($request->file('gallery'), $news->id, News::DIR_GALLERY, News::SIZES_GALLERY);
+                $this->uploadGallery(
+                    $request->file('gallery'),
+                    $news->id,
+                    'news_gallery',
+                    'news_id',
+                    News::DIR_GALLERY,
+                    News::SIZES_GALLERY
+                );
             }
 
             if ($request->has('related_news')) {
@@ -209,7 +216,14 @@ class AdminNewsController extends AdminController
             $this->updateI18n($id, 'news_id', $this->i18nTable, $requestData['i18n']);
 
             if ($request->hasFile('gallery')) {
-                $this->uploadGallery($request->file('gallery'), $id, News::DIR_GALLERY, News::SIZES_GALLERY);
+                $this->uploadGallery(
+                    $request->file('gallery'),
+                    $news->id,
+                    'news_gallery',
+                    'news_id',
+                    News::DIR_GALLERY,
+                    News::SIZES_GALLERY
+                );
             }
 
             if ($request->has('categories')) {

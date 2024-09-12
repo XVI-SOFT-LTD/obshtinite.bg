@@ -4,11 +4,13 @@ namespace App\Models;
 
 use App\Helpers\Helper;
 use App\Http\Traits\I18n;
+use App\Models\Municipality;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Landmark extends Model
@@ -73,6 +75,16 @@ class Landmark extends Model
     public function getDir(): string
     {
         return AdminController::MAIN_DIR . self::DIR . '/' . intval($this->id / 1000) . '/';
+    }
+
+    /**
+     * Get the municipality that owns the landmark.
+     *
+     * @return BelongsTo
+     */
+    public function municipality(): BelongsTo
+    {
+        return $this->belongsTo(Municipality::class, 'municipality_id');
     }
 
     /**

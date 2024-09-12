@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Helper;
+use App\Models\Landmark;
 use App\Http\Traits\I18n;
 use Illuminate\Http\Request;
 use App\Models\MunicipalityGallery;
@@ -153,5 +154,15 @@ class Municipality extends Model
             ->whereNull('deleted_at')
             ->orderBy('id', 'desc')
             ->get();
+    }
+
+    /**
+     * Get the landmarks for the municipality.
+     *
+     * @return HasMany
+     */
+    public function landmarks(): HasMany
+    {
+        return $this->hasMany(Landmark::class);
     }
 }

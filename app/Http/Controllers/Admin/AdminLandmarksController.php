@@ -48,6 +48,7 @@ class AdminLandmarksController extends AdminController
         $dataTable->setColumns([
             'fullname' => 'Име на забележителността',
             'logo' => 'Снимка',
+            'minicipality' => 'Община',
             'active' => 'Активна',
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
@@ -59,6 +60,9 @@ class AdminLandmarksController extends AdminController
             },
             'logo' => function ($landmark) {
                 return '<img src="' . $landmark->getLogo() . '" class="img-thumbnail" style="max-height: 40px;">';
+            },
+            'minicipality' => function ($landmark) {
+                return $landmark->municipality->i18n->name;
             },
             'active' => function ($landmark) {
                 return $landmark->active ? 'Да' : 'Не';

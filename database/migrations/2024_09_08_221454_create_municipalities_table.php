@@ -13,9 +13,9 @@ class CreateMunicipalitiesTable extends Migration
     {
         Schema::create('municipalities', function (Blueprint $table) {
             $table->id();
-            $table->string('logo', 250)->nullable()->comment('Лого на общината група');
+            $table->string('logo', 250)->nullable()->comment('Лого на общината');
             $table->string('slug')->comment('Секретно име на общината');
-            $table->string('website')->nullable()->comment('Уебсайт на партията');
+            $table->string('website')->nullable()->comment('Уебсайт на общината');
             $table->string('contact_email')->nullable()->comment('Имейл за контакт');
             $table->string('contact_phone_one')->nullable()->comment('Телефон за контакт 1');
             $table->string('contact_phone_two')->nullable()->comment('Телефон за контакт 2');

@@ -100,7 +100,7 @@
     'multiple' => false,
 ]) --}}
 
-{{-- @include('admin.developer.fields._textarea_autocomplete', [
+@include('admin.developer.fields._textarea_autocomplete', [
     'label' => 'Област',
     'placeholder' => 'Изберете Област от списъка',
     'id' => 'area_id',
@@ -110,7 +110,7 @@
     'selected' => $selectedArea,
     'line' => true,
     'multiple' => false,
-]) --}}
+])
 
 @include('admin.developer.fields._input', [
     'label' => 'Работно време',

@@ -4,11 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminAjaxController;
-use App\Http\Controllers\Admin\AdminLandmarksController;
 use App\Http\Controllers\Admin\AdminNewsController;
 use App\Http\Controllers\Admin\DeveloperController;
+use App\Http\Controllers\Admin\AdminAreasController;
 use App\Http\Controllers\Admin\AdminAuthorController;
 use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminLandmarksController;
 use App\Http\Controllers\Admin\AdminStaticPageController;
 use App\Http\Controllers\Admin\AdminMunicipalitiesController;
 use App\Http\Controllers\Admin\AdminParliamentaryGroupController;
@@ -52,6 +53,10 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     /* Paliamentary Group */
     Route::resource('parties', AdminParliamentaryGroupController::class)->except(['show', 'update']);
     Route::put('parties/{id}', [AdminParliamentaryGroupController::class, 'update'])->name('parties.update');
+
+    /* Areas */
+    Route::resource('areas', AdminAreasController::class)->except(['show', 'update']);
+    Route::put('areas/{id}', [AdminAreasController::class, 'update'])->name('areas.update');
 
     /* AJAX REQUESTS */
     Route::any('/ajax/uploadImageTinymce', [AdminAjaxController::class, 'uploadImageTinymceORIGINAL']);

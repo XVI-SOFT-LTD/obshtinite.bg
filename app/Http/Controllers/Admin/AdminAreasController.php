@@ -4,33 +4,32 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Area;
 use App\Helpers\Helper;
-use App\Models\Municipality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
+use App\Http\Requests\Admin\AdminAreasRequest;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
-use App\Http\Requests\Admin\AdminMunicipalitiesRequest;
 
-class AdminMunicipalitiesController extends AdminController
+class AdminAreasController extends AdminController
 {
-    protected $routes = 'municipalities';
+    protected $routes = 'areas';
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->singularPageTitle = 'община';
-        $this->pluralPageTitle = 'общини';
+        $this->singularPageTitle = 'област';
+        $this->pluralPageTitle = 'области';
 
-        $this->i18nTable = 'municipalities_i18n';
+        $this->i18nTable = 'areas_i18n';
 
-        $this->model = new Municipality();
+        $this->model = new Area();
 
         $this->basicBreadcrumbs = [
-            ['text' => 'Списък общини', 'url' => route($this->routes . '.index')],
+            ['text' => 'Списък области', 'url' => route($this->routes . '.index')],
         ];
     }
 
@@ -42,31 +41,27 @@ class AdminMunicipalitiesController extends AdminController
      */
     public function index(Request $request)
     {
-        $municipilities = $this->model->getAdminAll($request);
+        $areas = $this->model->getAdminAll($request);
 
         $dataTable = new DynamicAdminDataTable();
         $dataTable->setRoute($this->routes);
         $dataTable->setColumns([
-            'fullname' => 'Име на община',
+            'fullname' => 'Име на област',
             'logo' => 'Снимка',
-            'area' => 'Област',
             'active' => 'Активна',
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
         ]);
         $dataTable->setSkipSortableIds([2]);
-        $dataTable->setRows($municipilities, [
-            'name' => function ($municipilities) {
-                return $municipilities->i18n->name;
+        $dataTable->setRows($areas, [
+            'name' => function ($areas) {
+                return $areas->i18n->name;
             },
-            'logo' => function ($municipilities) {
-                return '<img src="' . $municipilities->getLogo() . '" class="img-thumbnail" style="max-height: 40px;">';
+            'logo' => function ($areas) {
+                return '<img src="' . $areas->getLogo() . '" class="img-thumbnail" style="max-height: 40px;">';
             },
-            'area' => function ($municipilities) {
-                return $municipilities->area->i18n->name;
-            },
-            'active' => function ($municipilities) {
-                return $municipilities->active ? 'Да' : 'Не';
+            'active' => function ($areas) {
+                return $areas->active ? 'Да' : 'Не';
             },
             'created_at',
             'updated_at',
@@ -78,7 +73,7 @@ class AdminMunicipalitiesController extends AdminController
     }
 
     /**
-     * Create a new municipality.
+     * Create a new area.
      *
      * @return Factory|View
      */
@@ -89,52 +84,43 @@ class AdminMunicipalitiesController extends AdminController
         $breadcrumbs = $this->basicBreadcrumbs;
         $breadcrumbs[] = ['text' => $title];
 
-        $areas = Area::getAreasForSelectAdmin();
-
         return view('admin.partials._form_create_custom')
             ->with('routes', $this->routes)
             ->with('breadcrumbs', $breadcrumbs)
-            ->with('selectedArea', '')
-            ->with('areas', $areas)
             ->with('pageTitle', $title);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param AdminMunicipalitiesRequest $request The request object.
+     * @param AdminAreasRequest $request The request object.
      * @return RedirectResponse The redirect response.
      */
-    public function store(AdminMunicipalitiesRequest $request)
+    public function store(AdminAreasRequest $request)
     {
         $requestData = $request->all();
         $requestData['created_by'] = auth()->user()->id;
         $requestData['updated_by'] = auth()->user()->id;
 
         $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
-        $requestData['active_from'] = $requestData['active_from'] ? date('Y-m-d H:i:s', strtotime($requestData['active_from'])) : null;
-        $requestData['active_to'] = $requestData['active_to'] ? date('Y-m-d H:i:s', strtotime($requestData['active_to'])) : null;
-        $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
-        $requestData['area_id'] = (int) $requestData['area_id'];
 
-        
         DB::transaction(function () use ($requestData, $request) {
-            $municipility = $this->model->create($requestData);
-            $this->insertI18n($municipility->id, 'municipality_id', $this->i18nTable, $requestData['i18n']);
+            $area = $this->model->create($requestData);
+            $this->insertI18n($area->id, 'area_id', $this->i18nTable, $requestData['i18n']);
 
             if ($request->hasFile('logo')) {
-                $logo = $this->uploadImage($request->file('logo'), $municipility->id, Municipality::DIR, Municipality::SIZES);
-                DB::table('municipalities')->where('id', $municipility->id)->update(['logo' => $logo]);
+                $logo = $this->uploadImage($request->file('logo'), $area->id, Area::DIR, Area::SIZES);
+                DB::table('areas')->where('id', $area->id)->update(['logo' => $logo]);
             }
 
             if ($request->hasFile('gallery')) {
                 $this->uploadGallery(
                     $request->file('gallery'),
-                    $municipility->id,
-                    'municipalities_gallery',
-                    'municipality_id',
-                    Municipality::DIR_GALLERY,
-                    Municipality::SIZES_GALLERY
+                    $area->id,
+                    'areas_gallery',
+                    'area_id',
+                    Area::DIR_GALLERY,
+                    Area::SIZES_GALLERY
                 );
             }
         });
@@ -143,16 +129,14 @@ class AdminMunicipalitiesController extends AdminController
     }
 
     /**
-     * Edit a municipality.
+     * Edit a area.
      *
-     * @param int $id The ID of the municipality to edit.
-     * @return View The view for editing the municipality.
+     * @param int $id The ID of the area to edit.
+     * @return View The view for editing the area.
      */
     public function edit(int $id): View
     {
-        $municipility = $this->model::findOrFail($id);
-        $areas = Area::getAreasForSelectAdmin();
-        $selectedArea = $this->model->getRelatedArea($id);
+        $area = $this->model::findOrFail($id);
 
         /* breadcrumbs */
         $title = 'Редакция на ' . $this->singularPageTitle;
@@ -160,23 +144,21 @@ class AdminMunicipalitiesController extends AdminController
         $breadcrumbs[] = ['text' => $title];
 
         return view('admin.partials._form_edit_custom')
-            ->with('object', $municipility)
-            ->with('dir', $municipility->getDir())
-            ->with('size', Municipality::MAIN_SIZE)
+            ->with('object', $area)
+            ->with('dir', $area->getDir())
+            ->with('size', Area::MAIN_SIZE)
             ->with('routes', $this->routes)
-            ->with('selectedArea', $selectedArea)
-            ->with('areas', $areas)
             ->with('pageTitle', $title);
     }
 
     /**
-     * Update a municipality.
+     * Update a area.
      *
-     * @param AdminMunicipalitiesRequest $request The request object.
-     * @param int $id The ID of the municipality to update.
+     * @param AdminAreasRequest $request The request object.
+     * @param int $id The ID of the area to update.
      * @return RedirectResponse The redirect response.
      */
-    public function update(AdminMunicipalitiesRequest $request, int $id): RedirectResponse
+    public function update(AdminAreasRequest $request, int $id): RedirectResponse
     {
         if (!$id) {
             return redirect()->back();
@@ -186,38 +168,34 @@ class AdminMunicipalitiesController extends AdminController
         $requestData['updated_by'] = auth()->user()->id;
 
         $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
-        $requestData['active_from'] = $requestData['active_from'] ? date('Y-m-d H:i:s', strtotime($requestData['active_from'])) : null;
-        $requestData['active_to'] = $requestData['active_to'] ? date('Y-m-d H:i:s', strtotime($requestData['active_to'])) : null;
-        $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
-        $requestData['area_id'] = (int) $requestData['area_id'];
-        
+
         if ($request->has('delete_logo')) {
             $requestData['logo'] = null;
         }
 
         if ($request->has('delete_gallery')) {
-            DB::table('municipalities_gallery')->whereIn('id', $request->get('delete_gallery'))->update(['deleted_at' => now()]);
+            DB::table('areas_gallery')->whereIn('id', $request->get('delete_gallery'))->update(['deleted_at' => now()]);
             $requestData['gallery'] = null;
         }
 
         if ($request->hasFile('logo')) {
-            $requestData['logo'] = $this->uploadImage($request->file('logo'), $id, Municipality::DIR, Municipality::SIZES);
+            $requestData['logo'] = $this->uploadImage($request->file('logo'), $id, Area::DIR, Area::SIZES);
         }
 
         DB::transaction(function () use ($requestData, $request, $id) {
             $municipility = $this->model->findOrFail($id);
             $municipility->update($requestData);
 
-            $this->updateI18n($id, 'municipality_id', $this->i18nTable, $requestData['i18n']);
+            $this->updateI18n($id, 'area_id', $this->i18nTable, $requestData['i18n']);
 
             if ($request->hasFile('gallery')) {
                 $this->uploadGallery(
                     $request->file('gallery'),
                     $municipility->id,
-                    'municipalities_gallery',
-                    'municipality_id',
-                    Municipality::DIR_GALLERY,
-                    Municipality::SIZES_GALLERY
+                    'areas_gallery',
+                    'area_id',
+                    Area::DIR_GALLERY,
+                    Area::SIZES_GALLERY
                 );
             }
 

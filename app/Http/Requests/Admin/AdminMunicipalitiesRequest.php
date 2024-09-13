@@ -23,6 +23,7 @@ class AdminMunicipalitiesRequest extends AdminFormRequest
             'active_to' => 'required',
             'i18n.1.keywords' => 'required',
             'position' => 'nullable|numeric',
+            'area_id' => 'required',
         ];
 
         return $rules;
@@ -46,6 +47,7 @@ class AdminMunicipalitiesRequest extends AdminFormRequest
             'social_media_links' => 'Социални медии',
             'i18n.1.keywords' => 'Ключови думи (bg)',
             'position' => 'Позиция',
+            'area_id' => 'Област',
         ];
     }
 }

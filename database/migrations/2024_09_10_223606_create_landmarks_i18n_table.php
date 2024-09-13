@@ -31,7 +31,7 @@ class CreateLandmarksI18nTable extends Migration
     public function down(): void
     {
          Schema::table('landmarks_i18n', function (Blueprint $table) {
-            $table->dropForeign(['municipality_id']);
+            $table->dropForeign(['landmark_id']);
             $table->dropForeign(['language_id']);
         });
         

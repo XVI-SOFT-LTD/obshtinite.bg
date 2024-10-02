@@ -2,41 +2,46 @@
 
 namespace App\Models;
 
+use App\Models\Participation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Municipality_i18n extends Model
+class Participation_i18n extends Model
 {
     use HasFactory, SoftDeletes;
-
-    protected $table = 'municipalities_i18n';
+    
+    protected $table = 'participations_i18n';
 
     protected $fillable = [
-        'municipality_id',
+        'participation_id',
         'language_id',
         'name',
         'description',
         'address',
+        'keywords',
     ];
 
     protected $casts = [
         'keywords' => 'array',
     ];
 
+    
     /**
-     * Get the municipality that owns the municipality_i18n.
+     * Get the participation that owns the Participation_i18n.
      *
      * @return BelongsTo
      */
-    public function municipality()
+    public function participation()
     {
-        return $this->belongsTo(Municipality::class);
+        return $this->belongsTo(Participation::class);
     }
 
     /**
-     * Get the language that belongs to the municipality.
+     * Get the language associated with the participation.
+     *
+     * This function defines a relationship where the participation belongs to a language.
      *
      * @return BelongsTo
      */

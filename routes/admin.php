@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminLandmarksController;
 use App\Http\Controllers\Admin\AdminStaticPageController;
 use App\Http\Controllers\Admin\AdminMunicipalitiesController;
+use App\Http\Controllers\Admin\AdminParticipationsController;
 use App\Http\Controllers\Admin\AdminParliamentaryGroupController;
 
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
@@ -57,6 +58,10 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     /* Areas */
     Route::resource('areas', AdminAreasController::class)->except(['show', 'update']);
     Route::put('areas/{id}', [AdminAreasController::class, 'update'])->name('areas.update');
+
+    /* Participations */
+    Route::resource('participations', AdminParticipationsController::class)->except(['show', 'update']);
+    Route::put('participations/{id}', [AdminParticipationsController::class, 'update'])->name('participations.update');
 
     /* AJAX REQUESTS */
     Route::any('/ajax/uploadImageTinymce', [AdminAjaxController::class, 'uploadImageTinymceORIGINAL']);

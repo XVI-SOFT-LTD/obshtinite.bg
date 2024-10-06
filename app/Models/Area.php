@@ -160,7 +160,7 @@ class Area extends Model
      *
      * @return HasMany
      */
-    public function participation(): HasMany
+    public function participations(): HasMany
     {
         return $this->hasMany(Participation::class);
     }

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Participation extends Model
 {
@@ -43,7 +44,6 @@ class Participation extends Model
         'logo',
         'slug',
         'area_id',
-        'category_id',
         'website',
         'contact_email',
         'contact_phone_one',
@@ -74,6 +74,19 @@ class Participation extends Model
     public function gallery(): HasMany
     {
         return $this->hasMany(ParticipationGallery::class);
+    }
+
+    /**
+     * Define a many-to-many relationship with the Category model.
+     *
+     * This method establishes a relationship between the Participation model
+     * and the Category model using a pivot table 'participations_categories'.
+     *
+     * @return BelongsToMany
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'participations_categories', 'participation_id', 'category_id');
     }
 
     /**
@@ -142,15 +155,14 @@ class Participation extends Model
         return $builder->get();
     }
 
-    public static function getAreasForSelectAdmin(): Collection
+    /**
+     * Retrieve the ID of the related area for a given participation.
+     *
+     * @return int The ID of the related area.
+     */
+    public function getRelatedArea(): int
     {
-        return self::with(['i18n' => function ($query) {
-            $query->select('area_id', 'name')->orderBy('name', 'asc');
-        }])
-            ->where('active', 1)
-            ->whereNull('deleted_at')
-            ->orderBy('id', 'desc')
-            ->get();
+        return $this->pluck('area_id', 'id')->first();
     }
 
     /**
@@ -160,17 +172,6 @@ class Participation extends Model
      */
     public function area(): BelongsTo
     {
-        return $this->belongsTo(Area::class, 'area_id');
+        return $this->belongsTo(Area::class);
     }
-
-    /**
-     * Get the category that owns the landmark.
-     *
-     * @return BelongsTo
-     */
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class, 'category_id');
-    }
-
 }

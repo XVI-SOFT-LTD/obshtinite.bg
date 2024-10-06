@@ -73,7 +73,7 @@ class ParliamentaryGroup extends Model
      */
     public function affiliatedParties(): BelongsToMany
     {
-        return $this->belongsToMany(ParliamentaryGroup::class, 'affiliated_party_parliamentary_group', 'parliamentary_group_id', 'affiliated_party_id');
+        return $this->belongsToMany(ParliamentaryGroup::class, 'affiliated_p_pg', 'parliamentary_group_id', 'affiliated_party_id');
     }
 
     /**

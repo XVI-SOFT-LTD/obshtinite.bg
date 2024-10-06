@@ -51,7 +51,6 @@ class Municipality extends Model
         'position',
         'working_hours',
         'social_media_links',
-        'keywords',
         'area_id',
         'active',
         'active_from',
@@ -63,7 +62,6 @@ class Municipality extends Model
     protected $casts = [
         'working_hours' => 'array',
         'social_media_links' => 'array',
-        'keywords' => 'array',
     ];
 
     /**

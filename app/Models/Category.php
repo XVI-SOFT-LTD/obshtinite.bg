@@ -10,6 +10,7 @@ use App\Models\Campaignable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Category extends Model
 {
@@ -45,6 +46,11 @@ class Category extends Model
     public function news()
     {
         return $this->belongsToMany(News::class, 'news_categories');
+    }
+
+    public function participations(): BelongsToMany
+    {
+        return $this->belongsToMany(Participation::class, 'participations_categories', 'category_id', 'participation_id');
     }
 
     /**

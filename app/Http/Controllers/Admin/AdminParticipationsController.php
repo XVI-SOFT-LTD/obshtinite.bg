@@ -13,6 +13,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
+use App\Http\Requests\Admin\AdminParticipationsRequest;
+use App\Models\ParticipationsCategories;
 
 class AdminParticipationsController extends AdminController
 {
@@ -49,13 +51,15 @@ class AdminParticipationsController extends AdminController
         $dataTable->setColumns([
             'fullname' => 'Име на участието',
             'logo' => 'Снимка',
-            'община' => 'Област',
+            'area' => 'Област',
             'category' => 'Категория',
             'active' => 'Активна',
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
         ]);
+        
         $dataTable->setSkipSortableIds([2]);
+    
         $dataTable->setRows($participations, [
             'name' => function ($participations) {
                 return $participations->i18n->name;
@@ -65,6 +69,13 @@ class AdminParticipationsController extends AdminController
             },
             'area' => function ($participations) {
                 return $participations->area->i18n->name;
+            },
+            'category' => function ($participations) {
+                $categoryNames = [];
+                foreach ($participations->categories as $category) {
+                    $categoryNames[] = $category->i18n->name;
+                }
+                return implode(', ', $categoryNames);
             },
             'active' => function ($participations) {
                 return $participations->active ? 'Да' : 'Не';
@@ -79,7 +90,7 @@ class AdminParticipationsController extends AdminController
     }
 
     /**
-     * Create a new municipality.
+     * Create a new participation.
      *
      * @return Factory|View
      */
@@ -103,75 +114,82 @@ class AdminParticipationsController extends AdminController
             ->with('pageTitle', $title);
     }
 
-    // /**
-    //  * Store a newly created resource in storage.
-    //  *
-    //  * @param AdminMunicipalitiesRequest $request The request object.
-    //  * @return RedirectResponse The redirect response.
-    //  */
-    // public function store(AdminMunicipalitiesRequest $request)
-    // {
-    //     $requestData = $request->all();
-    //     $requestData['created_by'] = auth()->user()->id;
-    //     $requestData['updated_by'] = auth()->user()->id;
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param AdminParticipationsRequest $request The request object.
+     * @return RedirectResponse The redirect response.
+     */
+    public function store(AdminParticipationsRequest $request)
+    {
+        $requestData = $request->all();
+        $requestData['created_by'] = auth()->user()->id;
+        $requestData['updated_by'] = auth()->user()->id;
 
-    //     $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
-    //     $requestData['active_from'] = $requestData['active_from'] ? date('Y-m-d H:i:s', strtotime($requestData['active_from'])) : null;
-    //     $requestData['active_to'] = $requestData['active_to'] ? date('Y-m-d H:i:s', strtotime($requestData['active_to'])) : null;
-    //     $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
-    //     $requestData['area_id'] = (int) $requestData['area_id'];
-
+        $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
+        $requestData['active_from'] = $requestData['active_from'] ? date('Y-m-d H:i:s', strtotime($requestData['active_from'])) : null;
+        $requestData['active_to'] = $requestData['active_to'] ? date('Y-m-d H:i:s', strtotime($requestData['active_to'])) : null;
+        $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
+        $requestData['area_id'] = (int) $requestData['area_id'];
         
-    //     DB::transaction(function () use ($requestData, $request) {
-    //         $municipility = $this->model->create($requestData);
-    //         $this->insertI18n($municipility->id, 'municipality_id', $this->i18nTable, $requestData['i18n']);
+        DB::transaction(function () use ($requestData, $request) {
+            $participation = $this->model->create($requestData);
+            $this->insertI18n($participation->id, 'participation_id', $this->i18nTable, $requestData['i18n']);
 
-    //         if ($request->hasFile('logo')) {
-    //             $logo = $this->uploadImage($request->file('logo'), $municipility->id, Municipality::DIR, Municipality::SIZES);
-    //             DB::table('municipalities')->where('id', $municipility->id)->update(['logo' => $logo]);
-    //         }
+            if ($request->hasFile('logo')) {
+                $logo = $this->uploadImage($request->file('logo'), $participation->id, Participation::DIR, Participation::SIZES);
+                DB::table('participations')->where('id', $participation->id)->update(['logo' => $logo]);
+            }
 
-    //         if ($request->hasFile('gallery')) {
-    //             $this->uploadGallery(
-    //                 $request->file('gallery'),
-    //                 $municipility->id,
-    //                 'municipalities_gallery',
-    //                 'municipality_id',
-    //                 Municipality::DIR_GALLERY,
-    //                 Municipality::SIZES_GALLERY
-    //             );
-    //         }
-    //     });
+            if ($request->hasFile('gallery')) {
+                $this->uploadGallery(
+                    $request->file('gallery'),
+                    $participation->id,
+                    'participations_gallery',
+                    'participation_id',
+                    Participation::DIR_GALLERY,
+                    Participation::SIZES_GALLERY
+                );
+            }
 
-    //     return redirect()->route($this->routes . '.index')->with('success', 'Успешно добавена ' . $this->singularPageTitle);
-    // }
+            if ($request->has('categories')) {
+                $this->addRelatedCategoriesIds($request->get('categories'), $participation->id);
+            }
+        });
 
-    // /**
-    //  * Edit a municipality.
-    //  *
-    //  * @param int $id The ID of the municipality to edit.
-    //  * @return View The view for editing the municipality.
-    //  */
-    // public function edit(int $id): View
-    // {
-    //     $municipility = $this->model::findOrFail($id);
-    //     $areas = Area::getAreasForSelectAdmin();
-    //     $selectedArea = $this->model->getRelatedArea($id);
+        return redirect()->route($this->routes . '.index')->with('success', 'Успешно добавено ' . $this->singularPageTitle);
+    }
 
-    //     /* breadcrumbs */
-    //     $title = 'Редакция на ' . $this->singularPageTitle;
-    //     $breadcrumbs = $this->basicBreadcrumbs;
-    //     $breadcrumbs[] = ['text' => $title];
+    /**
+     * Edit a municipality.
+     *
+     * @param int $id The ID of the municipality to edit.
+     * @return View The view for editing the municipality.
+     */
+    public function edit(int $id): View
+    {
+        $participation = $this->model::findOrFail($id);
+        $areas = Area::getAreasForSelectAdmin();
+        $catogories = Category::getCategoriesAdmin();
+        $selectedArea = $this->model->getRelatedArea();
+        $selectedCategories = (new ParticipationsCategories())->getRelatedAssoc($id);
 
-    //     return view('admin.partials._form_edit_custom')
-    //         ->with('object', $municipility)
-    //         ->with('dir', $municipility->getDir())
-    //         ->with('size', Municipality::MAIN_SIZE)
-    //         ->with('routes', $this->routes)
-    //         ->with('selectedArea', $selectedArea)
-    //         ->with('areas', $areas)
-    //         ->with('pageTitle', $title);
-    // }
+        /* breadcrumbs */
+        $title = 'Редакция на ' . $this->singularPageTitle;
+        $breadcrumbs = $this->basicBreadcrumbs;
+        $breadcrumbs[] = ['text' => $title];
+
+        return view('admin.partials._form_edit_custom')
+            ->with('object', $participation)
+            ->with('dir', $participation->getDir())
+            ->with('size', Participation::MAIN_SIZE)
+            ->with('routes', $this->routes)
+            ->with('selectedArea', $selectedArea)
+            ->with('areas', $areas)
+            ->with('selectedCategories', $selectedCategories)
+            ->with('catogories', $catogories)
+            ->with('pageTitle', $title);
+    }
 
     // /**
     //  * Update a municipality.
@@ -244,6 +262,31 @@ class AdminParticipationsController extends AdminController
             return response()->json(['status' => 'success', 'message' => 'Записът беше успешно изтрит.']);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => 'Записът не може да бъде изтрит.']);
+        }
+    }
+
+    
+    /**
+     * Add related category IDs to a participation.
+     *
+     * This method first deletes any existing category associations for the given participation ID.
+     * Then, it inserts new records for each category ID provided in the $categoriesIds array.
+     *
+     * @param array $categoriesIds An array of category IDs to be associated with the participation.
+     * @param int $participationId The ID of the participation to which the categories will be associated.
+     * @return void
+     */
+    public function addRelatedCategoriesIds(array $categoriesIds, int $participationId): void
+    {
+        ParticipationsCategories::where('participation_id', $participationId)->delete();
+
+        foreach ($categoriesIds as $categoryId) {
+            ParticipationsCategories::insert([
+                'participation_id' => $participationId,
+                'category_id' => $categoryId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
     }
 }

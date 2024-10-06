@@ -16,7 +16,6 @@ class CreateParticipationsTable extends Migration
             $table->string('logo', 250)->nullable()->comment('Лого на участието');
             $table->string('slug')->comment('Секретно име на участието');
             $table->unsignedBigInteger('area_id')->comment('ID на областта');
-            $table->unsignedBigInteger('category_id')->comment('ID на категорията');
             $table->string('website')->nullable()->comment('Уебсайт на участието');
             $table->string('contact_email')->nullable()->comment('Имейл за контакт');
             $table->string('contact_phone_one')->nullable()->comment('Телефон за контакт 1');
@@ -37,7 +36,6 @@ class CreateParticipationsTable extends Migration
 
         Schema::table('participations', function (Blueprint $table) {
             $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users');
             $table->foreign('updated_by')->references('id')->on('users');
         });
@@ -50,7 +48,6 @@ class CreateParticipationsTable extends Migration
     {
          Schema::table('participations', function (Blueprint $table) {
             $table->dropForeign(['area_id']);
-            $table->dropForeign(['category_id']);
             $table->dropForeign(['created_by']);
             $table->dropForeign(['updated_by']);
         });

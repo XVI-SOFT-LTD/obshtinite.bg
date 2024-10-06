@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Category;
-use App\Models\Campaignable;
-use App\Models\Campaign;
-use App\Models\BookCategory;
 use App\Models\Book;
+use App\Models\Campaign;
 use App\Http\Traits\I18n;
+use App\Models\BookCategory;
+use App\Models\Campaignable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Category extends Model
 {
@@ -45,6 +46,21 @@ class Category extends Model
     public function news()
     {
         return $this->belongsToMany(News::class, 'news_categories');
+    }
+
+    public function participations(): BelongsToMany
+    {
+        return $this->belongsToMany(Participation::class, 'participations_categories', 'category_id', 'participation_id');
+    }
+
+    /**
+     * Get the participations for the area
+     *
+     * @return HasMany
+     */
+    public function participation(): HasMany
+    {
+        return $this->hasMany(Participation::class);
     }
 
     /* custom methods */

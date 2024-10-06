@@ -155,4 +155,14 @@ class Area extends Model
         return $this->hasMany(Municipality::class);
     }
 
+    /**
+     * Get the participations for the area
+     *
+     * @return HasMany
+     */
+    public function participations(): HasMany
+    {
+        return $this->hasMany(Participation::class);
+    }
+
 }

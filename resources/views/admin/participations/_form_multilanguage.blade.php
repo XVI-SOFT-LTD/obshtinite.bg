@@ -9,7 +9,7 @@
 ])
 
 @include('admin.developer.fields._input', [
-    'label' => 'Име на общината [' . $language->code . ']',
+    'label' => 'Име [' . $language->code . ']',
     'id' => 'i18n[' . $language->id . '][name]',
     'name' => 'i18n[' . $language->id . '][name]',
     'required' => $language->id == 1 ? true : false,
@@ -34,7 +34,7 @@
     'name' => 'i18n[' . $language->id . '][address]',
     'required' => true,
     'value' => old('i18n.' . $language->id . '.address', $i18n ? $i18n[$language->id]->address : ''),
-    'hint' => 'Адрес на централата на общината',
+    'hint' => 'Адрес на централата на участието',
     'line' => true,
 ])
 

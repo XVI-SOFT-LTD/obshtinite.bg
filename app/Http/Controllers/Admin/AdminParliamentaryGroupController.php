@@ -213,10 +213,7 @@ class AdminParliamentaryGroupController extends AdminController
 
             if ($request->has('related_parties')) {
                 $this->addRelatedIds($request->get('related_parties'), $id);
-            } else {
-                AffiliatedParliamentaryGroup::where('parliamentary_group_id', $id)->delete();
             }
-
         });
 
         return redirect()->back()->with('success', 'Успешно редактирана ' . $this->singularPageTitle);

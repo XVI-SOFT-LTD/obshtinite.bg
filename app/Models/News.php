@@ -2,21 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\File;
+use App\Models\Author;
+use App\Helpers\Helper;
+use App\Models\Campaign;
+use App\Models\Category;
+use App\Http\Traits\I18n;
+use App\Models\BookRating;
+use App\Models\Campaignable;
+use App\Models\Municipality;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\File;
-use App\Models\Category;
-use App\Models\Campaignable;
-use App\Models\Campaign;
-use App\Models\BookRating;
-use App\Models\Author;
-use App\Http\Traits\I18n;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Controllers\Admin\AdminController;
-use App\Helpers\Helper;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class News extends Model
 {
@@ -48,6 +50,7 @@ class News extends Model
         'publish_date',
         'top',
         'active',
+        'municipality_id',
         'popular_posts',
         'views',
         'views_day',
@@ -81,6 +84,16 @@ class News extends Model
     public function related()
     {
         return $this->belongsToMany(News::class, 'news_related', 'news_id', 'related_id');
+    }
+
+    /**
+     * Get the municipality that owns the news.
+     *
+     * @return BelongsTo
+     */
+    public function municipality(): BelongsTo
+    {
+        return $this->belongsTo(Municipality::class, 'id');
     }
 
     public function previous()
@@ -237,5 +250,17 @@ class News extends Model
             ->where('id', '!=', $excludeId)
             ->orderBy('id', 'desc')
             ->get();
+    }
+
+    /**
+     * Retrieve the related municipality ID for the current news item.
+     *
+     * This method fetches the 'municipality_id' associated with the current news item's 'id'.
+     *
+     * @return int The ID of the related municipality.
+     */
+    public function getRelatedMunicipality(): int
+    {
+        return $this->pluck('municipality_id', 'id')->first();
     }
 }

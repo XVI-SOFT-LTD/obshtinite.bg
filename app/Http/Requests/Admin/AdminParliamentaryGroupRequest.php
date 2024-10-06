@@ -13,7 +13,7 @@ class AdminParliamentaryGroupRequest extends AdminFormRequest
             'i18n.1.leader_name' => 'required|max:255',
             'i18n.1.founder_name' => 'required|max:255',
             'i18n.1.description' => 'required',
-            'contact_phone' => 'required|max:255',
+            'contact_phone' => 'required|regex:/^[+]?[(]?[0-9]{1,4}[)]?[-\s\.\/0-9]*$/',
             'contact_email' => 'email',
             'founding_date' => 'required|date',
             'social_media_links' => 'array',

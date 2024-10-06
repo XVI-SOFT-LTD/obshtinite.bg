@@ -93,6 +93,18 @@
 ])
 
 @include('admin.developer.fields._textarea_autocomplete', [
+    'label' => 'Община',
+    'placeholder' => 'Изберете Община от списъка',
+    'id' => 'municipality_id',
+    'name' => 'municipality_id',
+    'required' => true,
+    'items' => $municipalities,
+    'selected' => $selectedMunicipality,
+    'line' => true,
+    'multiple' => false,
+])
+
+@include('admin.developer.fields._textarea_autocomplete', [
     'label' => 'Свързани статии',
     'placeholder' => 'Изберете статии от списъка',
     'id' => 'autocomplete_news',

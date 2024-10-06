@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use App\Models\NewsRelated;
-use App\Models\NewsCategory;
-use App\Models\NewsAuthor;
 use App\Models\News;
-use App\Models\Category;
 use App\Models\Author;
-use App\Http\Requests\Admin\AdminNewsRequest;
-use App\Http\Controllers\Admin\DynamicAdminDataTable;
-use App\Http\Controllers\Admin\AdminController;
 use App\Helpers\Helper;
+use App\Models\Category;
+use App\Models\NewsAuthor;
+use App\Models\NewsRelated;
+use App\Models\Municipality;
+use App\Models\NewsCategory;
+use Illuminate\Http\Request;
 use App\Helpers\DropDownHelper;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\Admin\AdminNewsRequest;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\DynamicAdminDataTable;
 
 class AdminNewsController extends AdminController
 {
@@ -50,6 +51,7 @@ class AdminNewsController extends AdminController
             'logo' => 'Снимка',
             'Дата на публикуване',
             'authors' => 'Автори',
+            'municipality' => 'Община',
             'active' => 'Активна',
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
@@ -67,6 +69,9 @@ class AdminNewsController extends AdminController
             },
             'authors' => function ($news) {
                 return Helper::getNewsAuthorsNamesAdmin($news);
+            },
+            'municipality' => function ($news) {
+                return $news->municipality->i18n->name;
             },
             'active' => function ($news) {
                 return $news->active ? 'Да' : 'Не';
@@ -90,6 +95,7 @@ class AdminNewsController extends AdminController
         $categories = Category::getCategoriesAdmin();
         $authors = Author::getAuthorsForSelectAdmin();
         $relatedNews = News::getForSelectAdmin();
+        $municipalities = Municipality::getMunicipalitiesForSelectAdmin();
 
         return view('admin.partials._form_create_custom')
             ->with('routes', $this->routes)
@@ -97,9 +103,11 @@ class AdminNewsController extends AdminController
             ->with('categories', $categories)
             ->with('authors', $authors)
             ->with('relatedNews', $relatedNews)
+            ->with('municipality', $municipalities)
             ->with('selectedCats', [])
             ->with('selectedAuthors', [])
             ->with('selectedRelatedNews', [])
+            ->with('selectedMunicipality', [])
             ->with('newsStatuses', $this->newsStatuses)
             ->with('pageTitle', $title);
     }
@@ -157,10 +165,12 @@ class AdminNewsController extends AdminController
         $categories = Category::getCategoriesAdmin();
         $authors = Author::getAuthorsForSelectAdmin();
         $relatedNews = News::getForSelectAdmin($id);
+        $municipalities = Municipality::getMunicipalitiesForSelectAdmin();
 
         $selectedCats = (new NewsCategory)->getCatsAssoc($id);
         $selectedAuthors = (new NewsAuthor)->getAuthorsAssoc($id);
         $selectedRelatedNews = (new NewsRelated)->getRelatedAssoc($id);
+        $selectedMunicipality = $this->model->getRelatedMunicipality();
 
         /* breadcrumbs */
         $title = 'Редакция на ' . $this->singularPageTitle;
@@ -176,9 +186,11 @@ class AdminNewsController extends AdminController
             ->with('categories', $categories)
             ->with('authors', $authors)
             ->with('relatedNews', $relatedNews)
+            ->with('municipalities', $municipalities)
             ->with('selectedCats', $selectedCats)
             ->with('selectedAuthors', $selectedAuthors)
             ->with('selectedRelatedNews', $selectedRelatedNews ?? [])
+            ->with('selectedMunicipality', $selectedMunicipality)
             ->with('newsStatuses', $this->newsStatuses)
             ->with('authors', $authors)
             ->with('pageTitle', $title);

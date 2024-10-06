@@ -15,6 +15,7 @@ class AdminNewsRequest extends AdminFormRequest
             'categories' => 'required|array',
             'authors' => 'required|array',
             'related_news' => 'array',
+            'municipality_id' => 'required',
         ];
 
         return $rules;
@@ -29,6 +30,7 @@ class AdminNewsRequest extends AdminFormRequest
             'categories' => 'Категории',
             'authors' => 'Автори',
             'related_news' => 'Свързани новини',
+            'municipality_id' => 'Община',
         ];
     }
 

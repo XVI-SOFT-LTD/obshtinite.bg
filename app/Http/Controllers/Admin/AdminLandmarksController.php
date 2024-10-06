@@ -127,7 +127,7 @@ class AdminLandmarksController extends AdminController
                     $request->file('gallery'),
                     $landmark->id,
                     'landmarks_gallery',
-                    'landmarks_id',
+                    'landmark_id',
                     Landmark::DIR_GALLERY,
                     Landmark::SIZES_GALLERY
                 );

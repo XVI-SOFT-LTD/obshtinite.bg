@@ -186,4 +186,9 @@ class Municipality extends Model
     {
         return $this->belongsTo(Area::class, 'area_id');
     }
+
+    public function news() {
+        return $this->hasMany(News::class);
+    }
+    
 }

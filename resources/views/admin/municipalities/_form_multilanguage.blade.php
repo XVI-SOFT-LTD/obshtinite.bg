@@ -43,7 +43,7 @@
     'id' => 'i18n[' . $language->id . '][keywords]',
     'name' => 'i18n[' . $language->id . '][keywords]',
     'required' => true,
-    'value' => old('i18n.' . $language->id . '.keywords', $i18n ? json_decode($i18n[$language->id]->keywords, true) : ''),
+    'value' => old('i18n.' . $language->id . '.keywords', $i18n ? $i18n[$language->id]->keywords : ''),
     'hint' => 'Ключови думи за SEO',
     'line' => true,
 ])

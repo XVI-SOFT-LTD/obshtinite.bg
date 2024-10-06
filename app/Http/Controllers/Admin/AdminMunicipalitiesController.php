@@ -151,7 +151,6 @@ class AdminMunicipalitiesController extends AdminController
     public function edit(int $id): View
     {
         $municipility = $this->model::findOrFail($id);
-        dd($municipility);
         $areas = Area::getAreasForSelectAdmin();
         $selectedArea = $this->model->getRelatedArea($id);
 
@@ -185,7 +184,6 @@ class AdminMunicipalitiesController extends AdminController
 
         $requestData = $request->all();
         $requestData['updated_by'] = auth()->user()->id;
-        dd($requestData);
 
         $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
         $requestData['active_from'] = $requestData['active_from'] ? date('Y-m-d H:i:s', strtotime($requestData['active_from'])) : null;

@@ -191,62 +191,65 @@ class AdminParticipationsController extends AdminController
             ->with('pageTitle', $title);
     }
 
-    // /**
-    //  * Update a municipality.
-    //  *
-    //  * @param AdminMunicipalitiesRequest $request The request object.
-    //  * @param int $id The ID of the municipality to update.
-    //  * @return RedirectResponse The redirect response.
-    //  */
-    // public function update(AdminMunicipalitiesRequest $request, int $id): RedirectResponse
-    // {
-    //     if (!$id) {
-    //         return redirect()->back();
-    //     }
+    /**
+     * Update a participation.
+     *
+     * @param AdminParticipationsRequest $request The request object.
+     * @param int $id The ID of the participation to update.
+     * @return RedirectResponse The redirect response.
+     */
+    public function update(AdminParticipationsRequest $request, int $id): RedirectResponse
+    {
+        if (!$id) {
+            return redirect()->back();
+        }
 
-    //     $requestData = $request->all();
-    //     $requestData['updated_by'] = auth()->user()->id;
-
-    //     $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
-    //     $requestData['active_from'] = $requestData['active_from'] ? date('Y-m-d H:i:s', strtotime($requestData['active_from'])) : null;
-    //     $requestData['active_to'] = $requestData['active_to'] ? date('Y-m-d H:i:s', strtotime($requestData['active_to'])) : null;
-    //     $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
-    //     $requestData['area_id'] = (int) $requestData['area_id'];
         
-    //     if ($request->has('delete_logo')) {
-    //         $requestData['logo'] = null;
-    //     }
+        $requestData = $request->all();
+        $requestData['updated_by'] = auth()->user()->id;
+        $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
+        $requestData['active_from'] = $requestData['active_from'] ? date('Y-m-d H:i:s', strtotime($requestData['active_from'])) : null;
+        $requestData['active_to'] = $requestData['active_to'] ? date('Y-m-d H:i:s', strtotime($requestData['active_to'])) : null;
+        $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
+        $requestData['area_id'] = (int) $requestData['area_id'];
+        
+        if ($request->has('delete_logo')) {
+            $requestData['logo'] = null;
+        }
 
-    //     if ($request->has('delete_gallery')) {
-    //         DB::table('municipalities_gallery')->whereIn('id', $request->get('delete_gallery'))->update(['deleted_at' => now()]);
-    //         $requestData['gallery'] = null;
-    //     }
+        if ($request->has('delete_gallery')) {
+            DB::table('participations_gallery')->whereIn('id', $request->get('delete_gallery'))->update(['deleted_at' => now()]);
+            $requestData['gallery'] = null;
+        }
 
-    //     if ($request->hasFile('logo')) {
-    //         $requestData['logo'] = $this->uploadImage($request->file('logo'), $id, Municipality::DIR, Municipality::SIZES);
-    //     }
+        if ($request->hasFile('logo')) {
+            $requestData['logo'] = $this->uploadImage($request->file('logo'), $id, Participation::DIR, Participation::SIZES);
+        }
+        
+        DB::transaction(function () use ($requestData, $request, $id) {
+            $participation = $this->model->findOrFail($id);
+            $participation->update($requestData);
 
-    //     DB::transaction(function () use ($requestData, $request, $id) {
-    //         $municipility = $this->model->findOrFail($id);
-    //         $municipility->update($requestData);
+            $this->updateI18n($id, 'participation_id', $this->i18nTable, $requestData['i18n']);
 
-    //         $this->updateI18n($id, 'municipality_id', $this->i18nTable, $requestData['i18n']);
+            if ($request->hasFile('gallery')) {
+                $this->uploadGallery(
+                    $request->file('gallery'),
+                    $participation->id,
+                    'participations_gallery',
+                    'participation_id',
+                    Participation::DIR_GALLERY,
+                    Participation::SIZES_GALLERY
+                );
+            }
 
-    //         if ($request->hasFile('gallery')) {
-    //             $this->uploadGallery(
-    //                 $request->file('gallery'),
-    //                 $municipility->id,
-    //                 'municipalities_gallery',
-    //                 'municipality_id',
-    //                 Municipality::DIR_GALLERY,
-    //                 Municipality::SIZES_GALLERY
-    //             );
-    //         }
+            if ($request->has('categories')) {
+                $this->addRelatedCategoriesIds($request->get('categories'), $id);
+            }
+        });
 
-    //     });
-
-    //     return redirect()->back()->with('success', 'Успешно редактирана ' . $this->singularPageTitle);
-    // }
+        return redirect()->back()->with('success', 'Успешно редактирано ' . $this->singularPageTitle);
+    }
 
     /**
      * Delete a record from the database.

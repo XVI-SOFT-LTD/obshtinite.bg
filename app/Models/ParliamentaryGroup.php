@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ParliamentaryGroup extends Model
@@ -50,7 +51,6 @@ class ParliamentaryGroup extends Model
         'logo',
         'slug',
         'founding_date',
-        'headquarters_address',
         'seats_in_parliament',
         'website',
         'founder_name',
@@ -151,5 +151,25 @@ class ParliamentaryGroup extends Model
             ->where('id', '!=', $excludeId)
             ->orderBy('id', 'desc')
             ->get();
+    }
+
+    /**
+     * Retrieve all active parliamentary groups for the homepage with pagination.
+     *
+     * This method fetches all parliamentary groups that are marked as active and have been updated
+     * up to the current date and time. The results are ordered by the updated date and ID in descending order.
+     * It also ensures that the groups have not been soft-deleted.
+     *
+     * @param int $onPage The number of items to display per page. Default is 20.
+     * @return LengthAwarePaginator Paginated list of parliamentary groups.
+     */
+    public function getAllParliamentaryGroupHomepagePaging(int $onPage = 20)
+    {
+        return $this->where('active', 1)
+            ->where('updated_at', '<=', date('Y-m-d H:i'))
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('id', 'desc')
+            ->whereNull('deleted_at')
+            ->paginate($onPage);
     }
 }

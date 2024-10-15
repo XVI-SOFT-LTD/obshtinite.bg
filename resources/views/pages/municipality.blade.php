@@ -1,10 +1,15 @@
+@php
+    $phones = array_filter([$municipality->contact_phone_one, $municipality->contact_phone_two]);
+    $longitude = $municipality->longitude;
+    $latitude = $municipality->latitude;
+@endphp
 @include('layouts.partials._head')
 <!DOCTYPE html>
 <html lang="en">
 
 <body>
     @include('layouts.partials._before_header')
-
+    {{-- @dd($municipality->getDir()) --}}
     <!-- header -->
     <header class="flex flex-col overflow-x-hidden ">
         <div class="grid gird-cols-1 lg:grid-cols-3">
@@ -21,7 +26,7 @@
             <div class="flex items-center text-sm gap-1 text-stone-400">
                 <a class="text-black">Начало</a>/
                 <a class="text-black">Общини</a>/
-                <a class="text-stone-400">Община Пловид</a>
+                <a class="text-stone-400">Община {{ $municipality->i18n->name }}</a>
             </div>
         </div>
     </header>
@@ -34,35 +39,46 @@
         <div class="flex flex-col gap-5 lg:col-span-2">
             <div class="grid grid-cols-1 gap-10 lg:grid-cols-3 px-5">
                 <div class="bg-red-600 w-full">
-                    <img alt="obshtina-snimka" src="{{ asset('theme/images/sidenews-2.jpg') }}"
+                    <img alt="obshtina-snimka" src="{{ $municipality->getLogo(320) }}"
                         class="w-full h-full object-cover" />
 
                 </div>
                 <div class="flex flex-col gap-10 lg:col-span-2 px-5">
                     <div class="p-3 uppercase flex-center slanted-border-container shadow-xl w-full">
-                        <h1 class="text-center text-lg">Община Пловдив</h1>
+                        <h1 class="text-center text-lg">Община {{ $municipality->i18n->name }}</h1>
                     </div>
                     <div class="flex flex-col gap-3">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-phone"></i>
-                            <p>(+359) 87 6342755/ (+359) 87 6342755/</p>
+                            <p>{{ implode(' / ', $phones) }}</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-map-pin"></i>
-                            <p>Пловдив, бул. "Цар Борис 3-ти Обединител</p>
+                            <p>{!! $municipality->i18n->address !!}</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fa-regular fa-envelope"></i>
-                            <p>antique teatre@mail.mail</p>
+                            <p>{!! $municipality->contact_email !!}</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-globe"></i>
-                            <p>www.antique teatre.bg</p>
+                            <p>
+                                @if ($municipality->website)
+                                    <a href="{{ $municipality->website }}" target="_blank"
+                                        rel="noopener noreferrer">{{ $municipality->website }}</a>
+                                @endif
+                            </p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-share-nodes"></i>
+                            {{-- <i class="fa-solid fa-share-nodes"></i>
                             <i class="fa-brands fa-facebook-f"></i>
-                            <i class="fa-regular fa-envelope"></i>
+                            <i class="fa-regular fa-envelope"></i> --}}
+                            <a href="mailto:{{ $municipality->contact_email }}"><i class="fa-solid fa-envelope"></i></a>
+                            @foreach ($municipality->social_media_links as $network => $url)
+                                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
+                                    <i class="fa-brands fa-{{ $network }}"></i>
+                                </a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -72,7 +88,7 @@
             <!-- multiple pictures swiper component -->
             <div class="swiper mySwiperTwo w-full h-[250px]">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide">
+                    {{-- <div class="swiper-slide">
                         <img src="{{ asset('theme/images/swiper.png') }}" />
                     </div>
                     <div class="swiper-slide">
@@ -95,7 +111,12 @@
                     </div>
                     <div class="swiper-slide">
                         <img src="{{ asset('theme/images/swiper.png') }}" />
-                    </div>
+                    </div> --}}
+                    @foreach ($municipality->gallery as $image)
+                        <div class="swiper-slide">
+                            <img src="{{ asset($image->getImage(445)) }}" alt="Gallery Image" />
+                        </div>
+                    @endforeach
                 </div>
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
@@ -132,7 +153,7 @@
 
 
             <iframe
-                src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d5914.955480934349!2d24.745847623028343!3d42.16146152997191!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e0!3m2!1sbg!2sbg!4v1721156789591!5m2!1sbg!2sbg"
+                src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d5914.955480934349!2d{{ $longitude }}!3d{{ $latitude }}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e0!3m2!1sbg!2sbg!4v1721156789591!5m2!1sbg!2sbg"
                 width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"></iframe>
 
@@ -147,7 +168,6 @@
                 </div>
                 <h1 class="lg:text-lg">Природни Забележителности | Aрхитектурни забележителности | Музии</h1>
             </div>
-
         </div>
 
 

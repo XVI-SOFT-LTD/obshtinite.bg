@@ -149,4 +149,14 @@ class Landmark extends Model
     {
         return $this->where('id', $landmarkId)->pluck('municipality_id', 'id')->first();
     }
+
+    public function getAllLandmarksHomepagePaging(int $onPage = 20)
+    {
+        return $this->where('active', 1)
+            ->where('updated_at', '<=', date('Y-m-d H:i'))
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('id', 'desc')
+            ->whereNull('deleted_at')
+            ->paginate($onPage);
+    }
 }

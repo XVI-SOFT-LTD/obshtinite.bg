@@ -1,11 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AreaController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PageController;
-use App\Http\Controllers\NewsController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MunicipalityController;
+use App\Http\Controllers\ParliamentaryGroupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +36,15 @@ Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
 
 Route::get('/obshtinite/{id}', [PageController::class, 'municipality'])->name('municipality');
 Route::get('/oblasti/{id}', [PageController::class, 'area'])->name('area');
+
+/* Municipality */
+Route::get('/municipality/{slug}', [MunicipalityController::class, 'show'])->name('municipality.show');
+
+/* Area */
+Route::get('/area/{slug}', [AreaController::class, 'show'])->name('area.show');
+
+/* Parliamentary Group */
+Route::get('/parliamentary-group/{slug}', [ParliamentaryGroupController::class, 'show'])->name('parliamentaryGroup.show');
 
 /* OLD */
 

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class Municipality extends Model
 {
@@ -187,8 +188,37 @@ class Municipality extends Model
         return $this->belongsTo(Area::class, 'area_id');
     }
 
+    /**
+     * Get the news associated with the municipality.
+     *
+     * This function defines a one-to-many relationship between the Municipality model
+     * and the News model. It indicates that a municipality can have multiple news entries.
+     *
+     * @return HasMany
+     */
     public function news() {
         return $this->hasMany(News::class);
+    }
+
+    /**
+     * Retrieve all active municipalities for the homepage with pagination.
+     *
+     * This method fetches municipalities that are marked as active and have been updated
+     * up to the current date and time. The results are ordered by the update timestamp
+     * in descending order, followed by the ID in descending order. Only municipalities
+     * that have not been soft-deleted are included in the results.
+     *
+     * @param int $onPage The number of municipalities to display per page. Default is 20.
+     * @return LengthAwarePaginator Paginated list of municipalities.
+     */
+    public function getAllMunicipalitiesHomepagePaging(int $onPage = 20)
+    {
+        return $this->where('active', 1)
+            ->where('updated_at', '<=', date('Y-m-d H:i'))
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('id', 'desc')
+            ->whereNull('deleted_at')
+            ->paginate($onPage);
     }
     
 }

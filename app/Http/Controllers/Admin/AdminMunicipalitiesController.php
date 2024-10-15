@@ -49,7 +49,6 @@ class AdminMunicipalitiesController extends AdminController
         $dataTable->setColumns([
             'fullname' => 'Име на община',
             'logo' => 'Снимка',
-            'area' => 'Област',
             'active' => 'Активна',
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
@@ -61,9 +60,6 @@ class AdminMunicipalitiesController extends AdminController
             },
             'logo' => function ($municipilities) {
                 return '<img src="' . $municipilities->getLogo() . '" class="img-thumbnail" style="max-height: 40px;">';
-            },
-            'area' => function ($municipilities) {
-                return $municipilities->area->i18n->name;
             },
             'active' => function ($municipilities) {
                 return $municipilities->active ? 'Да' : 'Не';

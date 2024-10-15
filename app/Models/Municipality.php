@@ -171,9 +171,9 @@ class Municipality extends Model
      * Retrieve the ID of the related area for a given municipality.
      *
      * @param int $municipalityId The ID of the municipality.
-     * @return int The ID of the related area.
+     * @return int|null The ID of the related area.
      */
-    public function getRelatedArea(int $municipalityId): int
+    public function getRelatedArea(int $municipalityId): ?int
     {
         return $this->where('id', $municipalityId)->pluck('area_id', 'id')->first();
     }

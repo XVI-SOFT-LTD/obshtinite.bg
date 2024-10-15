@@ -39,7 +39,7 @@ class MunicipalityGallery extends Model
      */
     public function getDir(): string
     {
-        return AdminController::MAIN_DIR . Municipality::DIR_GALLERY . '/' . intval($this->parliamentary_group_id / 1000) . '/';
+        return AdminController::MAIN_DIR . Municipality::DIR_GALLERY . '/' . intval($this->municipality_id / 1000) . '/';
     }
 
     /**

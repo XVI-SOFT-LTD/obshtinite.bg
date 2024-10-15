@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Area;
 use App\Helpers\Helper;
-use App\Models\Municipality;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Contracts\View\Factory;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
 use App\Http\Requests\Admin\AdminMunicipalitiesRequest;
+use App\Models\Area;
+use App\Models\Municipality;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminMunicipalitiesController extends AdminController
 {
@@ -63,7 +63,7 @@ class AdminMunicipalitiesController extends AdminController
                 return '<img src="' . $municipilities->getLogo() . '" class="img-thumbnail" style="max-height: 40px;">';
             },
             'area' => function ($municipilities) {
-                return $municipilities->area->i18n->name;
+                return $municipilities->area?->i18n->name;
             },
             'active' => function ($municipilities) {
                 return $municipilities->active ? 'Да' : 'Не';
@@ -117,7 +117,6 @@ class AdminMunicipalitiesController extends AdminController
         $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
         $requestData['area_id'] = (int) $requestData['area_id'];
 
-        
         DB::transaction(function () use ($requestData, $request) {
             $municipility = $this->model->create($requestData);
             $this->insertI18n($municipility->id, 'municipality_id', $this->i18nTable, $requestData['i18n']);
@@ -190,7 +189,7 @@ class AdminMunicipalitiesController extends AdminController
         $requestData['active_to'] = $requestData['active_to'] ? date('Y-m-d H:i:s', strtotime($requestData['active_to'])) : null;
         $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
         $requestData['area_id'] = (int) $requestData['area_id'];
-        
+
         if ($request->has('delete_logo')) {
             $requestData['logo'] = null;
         }

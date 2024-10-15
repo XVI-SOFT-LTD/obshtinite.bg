@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use DB;
 
@@ -9,84 +10,50 @@ class AdminMoveController extends Controller
 {
     public function index()
     {
-        #DB::table('municipalities')->truncate();
+        die;
+        $this->truncateTables();
 
         $rows = DB::connection('old')->select("select * from wp_posts where post_type = 'post' and post_parent = 0 and post_title LIKE 'Община%' and post_status = 'publish' order by id desc");
         if ($rows) {
             foreach ($rows as $row) {
-                $data = [
-                    // 'id' => $row->ID,
-                    // "name_bg" => $row->post_title,
-                    // 'description_bg' => $row->post_content,
-                    // "address_bg" => $this->getAddress($row->post_content),
-                    // 'email' => $this->getEmail($row->post_content),
-                    // 'website' => $this->getWebsite($row->post_content),
-                    // "logo" => $this->getLogo($row->post_content),
-                    // "video" => null,
-                    // 'latitude' => null,
-                    // 'longitude' => null,
-                    // "phone1" => $this->getPhone($row->post_content),
-                    // #"phone2",
-                    // #'work_time_bg',
-                    // #'fb_url',
-                    // #'google_url',
-                    // #'type_subscription',
-                    // #'position_vip',
-                    // 'tags_bg' => null,
-                    // #'valid_from',
-                    // #'valid_to',
-                    // #'homepage',
-                    // 'active' => 1,
-                    // 'created_at' => date('Y-m-d H:i:s'),
-                    // 'updated_at' => date('Y-m-d H:i:s'),
-                    
-                    #municipalities
-                    'id' => 'int',
-                    'area_id' => 'int',
-                    'logo' => 'varchar',
-                    'slug' => 'varchar',
-                    'website' => 'varchar',
-                    'contact_email' => 'varchar',
-                    'contact_phone_one' => 'varchar',
-                    'contact_phone_two' => 'varchar',
-                    'longitude' => 'varchar',
-                    'latitude'  => 'varchar',
-                    'position' => 'int',
-                    'working_hours' => 'json',
-                    'social_media_links' => 'json',
-                    'active_from' => 'datetime',
-                    'active_to' => 'datetime',
-                    'active' => 'tinyint',
-                    'created_by' => 'int',
-                    'updated_by' => 'int',
-                    'created_at' => 'timestamp',
-                    'updated_at' => 'timestamp',
-                    'deleted_at' => 'timestamp',
+                $slug = Helper::strSlug($row->post_title);
 
-                    #municipalities_i18n
-                    'municipality_id' => 'int',
-                    'language_id' => 'int',
-                    'name' => 'varchar',
-                    'description' => 'text',
-                    'address' => 'varchar',
-                    'keywords' => 'json',
-                    'created_at' => 'timestamp',
-                    'updated_at' => 'timestamp',
-                    'deleted_at' => 'timestamp',
+                $id = DB::table('municipalities')->insertGetId([
+                    'id' => $row->ID,
+                    'slug' => $slug,
+                    'contact_email' => $this->getEmail($row->post_content),
+                    'website' => $this->getWebsite($row->post_content),
+                    "logo" => $this->getLogo($row->post_content),
+                    "contact_phone_one" => $this->getPhone($row->post_content),
+                    'active' => 1,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
 
-                    #municipalities_gallery
-                    'municipality_id' => 'int',
-                    'filename' => 'varchar',
-                    'sort_order' => 'int',
-                    'created_at' => 'timestamp',
-                    'updated_at' => 'timestamp',
-                    'deleted_at' => 'timestamp',
-                    
-                ];
-                dump($data, $row);
-                #DB::table('municipalities')->insertGetId($data);
+                DB::table('municipalities_i18n')->insert([
+                    'municipality_id' => $id,
+                    'language_id' => 1,
+                    'name' => $row->post_title,
+                    'description' => $row->post_content,
+                    'address' => $this->getAddress($row->post_content),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
             }
         }
+    }
+
+    private function truncateTables()
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        DB::table('landmarks_gallery')->truncate();
+        DB::table('landmarks_i18n')->truncate();
+        DB::table('landmarks')->truncate();
+        DB::table('municipalities_i18n')->truncate();
+        DB::table('municipalities')->truncate();
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     private function getAddress($description)

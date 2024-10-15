@@ -49,9 +49,7 @@
     <div class="flex flex-col gap-5 white-bg-gradient mt-5">
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 px-5">
             <div class="w-full">
-                {{-- @dd($area->getLogo()) --}}
-                <img class="w-full" src="{{ $area->getLogo() }}
-                    alt="obshtina-burgas" />
+                <img class="w-full" src="{{ $area->getLogo() }}" alt="obshtina-{{ $area->slug }}" />
             </div>
             <div class="lg:col-span-2 flex flex-col gap-5">
                 <h1 class="text-xl uppercase">{{ $area->i18n->name }}</h1>

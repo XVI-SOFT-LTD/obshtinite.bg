@@ -51,7 +51,6 @@ class AdminNewsController extends AdminController
             'logo' => 'Снимка',
             'Дата на публикуване',
             'authors' => 'Автори',
-            'municipality' => 'Община',
             'active' => 'Активна',
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
@@ -69,9 +68,6 @@ class AdminNewsController extends AdminController
             },
             'authors' => function ($news) {
                 return Helper::getNewsAuthorsNamesAdmin($news);
-            },
-            'municipality' => function ($news) {
-                return $news->municipality->i18n->name;
             },
             'active' => function ($news) {
                 return $news->active ? 'Да' : 'Не';

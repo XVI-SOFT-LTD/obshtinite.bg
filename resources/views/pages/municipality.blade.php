@@ -74,11 +74,15 @@
                             <i class="fa-brands fa-facebook-f"></i>
                             <i class="fa-regular fa-envelope"></i> --}}
                             <a href="mailto:{{ $municipality->contact_email }}"><i class="fa-solid fa-envelope"></i></a>
-                            @foreach ($municipality->social_media_links as $network => $url)
-                                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
-                                    <i class="fa-brands fa-{{ $network }}"></i>
-                                </a>
-                            @endforeach
+                            @if ($municipality->social_media_links)
+                                @foreach ($municipality->social_media_links as $network => $url)
+                                    <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
+                                        <i class="fa-brands fa-{{ $network }}"></i>
+                                    </a>
+                                @endforeach
+                            @else
+                                <p>Няма налични социални мрежи</p>
+                            @endif
                         </div>
                     </div>
                 </div>

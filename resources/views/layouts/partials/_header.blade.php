@@ -1,5 +1,53 @@
 @include('layouts.partials._before_header')
 <!-- header -->
+{{-- <header>
+        <div class="main_wrapper w100 flex_between">
+            <div class="logo">
+                <a href="{{ asset('/') }}">
+                    Общините в България
+                </a>
+            </div> <!-- ./ Logo -->
+
+            <nav class="desktop-nav">
+                <span class="mobile_button_nav display_none"><i class="fa fa-bars" aria-hidden="true"></i></span>
+
+                <ul class="flex">
+                    <li><a href="{{ asset('/') }}">{{ trans('app.homepage') }}</a></li>
+                    @if (session('locale') != 'en')
+                        <li><a href="{{ asset('news') }}">{{ trans('app.news') }}</a></li>
+                    @endif
+                    <li><a href="{{ asset('areas') }}">{{ trans('app.areas') }}</a></li>
+                    <li><a href="{{ asset('parliamentary-groups') }}">{{ trans('app.parties') }}</a></li>
+                    <li><a href="{{ asset('landmarks') }}">{{ trans('app.landmarks') }}</a></li>
+                </ul>
+                <div class="search"><span class="icon-search"></span></div>
+                <div class="lang_switcher">
+                    @if (config('app.locale') == 'bg')
+                        <a href="{{ asset('lang/en') }}">EN</a>
+                    @else
+                        <a href="{{ asset('lang/bg') }}">BG</a>
+                    @endif
+                </div>
+            </nav> <!-- ./ Nav -->
+
+            <ul class="flex mobile_menu">
+                <li><a href="{{ asset('/') }}">{{ trans('app.homepage') }}</a></li>
+                @if (session('locale') != 'en')
+                    <li><a href="{{ asset('news') }}">{{ trans('app.news') }}</a></li>
+                @endif
+                <li><a href="{{ asset('areas') }}">{{ trans('app.areas') }}</a></li>
+                <li><a href="{{ asset('parliamentary-groups') }}">{{ trans('app.parties') }}</a></li>
+                <li><a href="{{ asset('landmarks') }}">{{ trans('app.landmarks') }}</a></li>
+            </ul> <!-- ./ Mobile Nav -->
+
+            <div class="search_form">
+                {!! Form::open(['url' => 'search', 'method' => 'POST']) !!}
+                {{ Form::text('words', null, ['placeholder' => trans('app.searchValue')]) }}
+                {{ Form::button('<i class="fa fa-search" aria-hidden="true"></i>', ['class' => 'btn btn-primary', 'type' => 'submit']) }}
+                {!! Form::close() !!}
+            </div> <!-- ./ Search Form -->
+        </div>
+    </header> --}}
 <header class="flex flex-col overflow-x-hidden">
     <div class="grid gird-cols-1 lg:grid-cols-3">
         <div class="flex justify-center items-center p-5">

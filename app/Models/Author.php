@@ -87,7 +87,7 @@ class Author extends Model
         #$builder->orderBy('i18n.fullname', 'ASC');
         $builder->orderBy('id', 'desc');
 
-        return $builder->paginate(20);
+        return $builder->paginate(10);
     }
 
     public function getAuthorsAdminAll(Request $request)

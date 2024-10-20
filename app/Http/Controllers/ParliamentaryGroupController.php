@@ -17,6 +17,7 @@ class ParliamentaryGroupController extends Controller
     public function show(string $slug)
     {
         $parliamentaryGroup = $this->parliamentaryGroupsModel->where('slug', $slug)->firstOrFail();
+        // dd($parliamentaryGroup);
         
         return view('pages.parliamentarygroup', compact('parliamentaryGroup'));
     }

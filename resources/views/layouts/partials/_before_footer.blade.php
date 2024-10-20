@@ -4,8 +4,11 @@
     <div class="flex flex-col gap-5 lg:col-span-2">
         <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between px-5 bg-green w-full p-3 text-white">
-                <h1 class="uppercase text-xl">Общини</h1>
-                <button class="uppercase text-lg">Виж всички</button>
+                <h1 class="uppercase text-xl">{{ trans('app.municipalities') }}</h1>
+                <a href="{{ route('category.listing.layout', ['categoryName' => 'municipalities']) }}"
+                    class="uppercase text-lg">
+                    <button>{{ trans('app.viewAll') }}</button>
+                </a>
             </div>
 
             <div class="swiper mySwiperFour">
@@ -27,13 +30,16 @@
                         </div>
                     @endforeach
                 </div>
-                <div class="swiper-pagination"></div>
+                {{-- <div class="swiper-pagination"></div> --}}
             </div>
         </div>
         <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between px-5 bg-red w-full p-3 text-white">
-                <h1 class="uppercase text-xl">Партии</h1>
-                <button class="uppercase text-lg">Виж всички</button>
+                <h1 class="uppercase text-xl">{{ trans('app.parliamentaryGroups') }}</h1>
+                <a href="{{ route('category.listing.layout', ['categoryName' => 'parliamentaryGroups']) }}"
+                    class="uppercase text-lg">
+                    <button>{{ trans('app.viewAll') }}</button>
+                </a>
             </div>
 
 
@@ -50,14 +56,14 @@
                                 </p>
                                 <a href="{{ route('parliamentaryGroup.show', $parliamentaryGroup->slug) }}"
                                     class="w-max text-sm text-red group-hover:text-white">
-                                    Виж още <i class="fa-solid fa-chevron-right"></i>
+                                    {{ trans('app.seeMore') }}<i class="fa-solid fa-chevron-right"></i>
                                 </a>
 
                             </div>
                         </div>
                     @endforeach
                 </div>
-                <div class="swiper-pagination"></div>
+                {{-- <div class="swiper-pagination"></div> --}}
             </div>
 
         </div>
@@ -65,9 +71,11 @@
             <div class="flex items-center justify-between px-5 bg-green w-full p-3 text-white">
                 <h1 class="w-full text-center">Природни забележителности | <span class="underline">Архитектурни
                         забележителности</span> | Музеи</h1>
-                <button class="uppercase w-1/3 flex justify-end">Виж всички</button>
+                <a href="{{ route('category.listing.layout', ['categoryName' => 'landmarks']) }}"
+                    class="uppercase w-1/3 flex justify-end">
+                    <button>{{ trans('app.viewAll') }}</button>
+                </a>
             </div>
-
             <div class="swiper mySwiperFour">
                 <div class="swiper-wrapper xl:px-5">
                     @foreach ($landmarks as $landmark)
@@ -79,13 +87,13 @@
                                     {{ \Illuminate\Support\Str::limit(html_entity_decode(strip_tags($landmark->i18n->description)), 50) }}
                                 </p>
                                 <button
-                                    class="transition-all py-2 px-3 w-max text-sm text-red group-hover:text-white group-hover:w-full group-hover:flex group-hover:justify-between group-hover:items-center group-hover:bg-[#333333]">Виж
-                                    още <i class="fa-solid fa-chevron-right"></i></button>
+                                    class="transition-all py-2 px-3 w-max text-sm text-red group-hover:text-white group-hover:w-full group-hover:flex group-hover:justify-between group-hover:items-center group-hover:bg-[#333333]">{{ trans('app.seeMore') }}<i
+                                        class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
                     @endforeach
                 </div>
-                <div class="swiper-pagination"></div>
+                {{-- <div class="swiper-pagination"></div> --}}
             </div>
         </div>
     </div>

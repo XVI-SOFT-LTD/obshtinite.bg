@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Requests\Admin\AdminLandmarksRequest;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
@@ -43,7 +44,8 @@ class AdminLandmarksController extends AdminController
     {
         $landmark = $this->model->getAdminAll($request);
 
-        $dataTable = new DynamicAdminDataTable();
+        $dataTable = new AdminDataTable();
+        $dataTable->setPaginator($landmark);
         $dataTable->setRoute($this->routes);
         $dataTable->setColumns([
             'fullname' => 'Име на забележителността',
@@ -53,7 +55,7 @@ class AdminLandmarksController extends AdminController
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
         ]);
-        $dataTable->setSkipSortableIds([2]);
+
         $dataTable->setRows($landmark, [
             'name' => function ($landmark) {
                 return $landmark->i18n->name;

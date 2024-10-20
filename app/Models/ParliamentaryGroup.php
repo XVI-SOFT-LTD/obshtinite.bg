@@ -118,9 +118,9 @@ class ParliamentaryGroup extends Model
      * Retrieve all parliamentary groups with optional filtering by word.
      *
      * @param Request $request The HTTP request object.
-     * @return Collection The collection of parliamentary groups.
+     * @return object The collection of parliamentary groups.
      */
-    public function getAdminAll(Request $request): Collection
+    public function getAdminAll(Request $request): object
     {
         $word = $request->get('word');
 
@@ -134,7 +134,7 @@ class ParliamentaryGroup extends Model
 
         $builder->orderBy('id', 'desc');
 
-        return $builder->get();
+        return $builder->paginate(10);
     }
 
     /**

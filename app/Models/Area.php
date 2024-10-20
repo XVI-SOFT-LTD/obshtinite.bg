@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Area extends Model
 {
@@ -126,7 +127,7 @@ class Area extends Model
 
         $builder->orderBy('id', 'desc');
 
-        return $builder->get();
+        return $builder->paginate(10);
     }
 
     /**
@@ -163,6 +164,51 @@ class Area extends Model
     public function participations(): HasMany
     {
         return $this->hasMany(Participation::class);
+    }
+
+    
+    /**
+     * Get all landmarks from municipalities attached to the area.
+     *
+     * @return HasManyThrough
+     */
+    public function landmarks(): HasManyThrough
+    {
+        return $this->hasManyThrough(Landmark::class, Municipality::class);
+    }
+
+    /**
+     * Get all news from municipalities attached to the area.
+     *
+     * @return HasManyThrough
+     */
+    public function news(): HasManyThrough
+    {
+        return $this->hasManyThrough(News::class, Municipality::class);
+    }
+    
+    /**
+     * Retrieve all active areas.
+     *
+     * @return Collection
+     */
+    public static function getActiveAreas(): Collection
+    {
+        return self::where('active', 1)
+            ->whereNull('deleted_at')
+            ->orderBy('id', 'desc')
+            ->get();
+    }
+
+     public function getAllLandmarks(): Collection
+    {
+        $landmarks = $this->municipality()
+        ->with('landmarks')
+        ->get()
+        ->pluck('landmarks')
+        ->flatten();
+
+    return new Collection($landmarks);
     }
 
 }

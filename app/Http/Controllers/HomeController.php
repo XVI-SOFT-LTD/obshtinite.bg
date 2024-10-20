@@ -35,9 +35,9 @@ class HomeController extends Controller
         }
 
         $news = $this->newsModel->getAllNewsHomepagePaging($excludedIds, 10);
-        $parliamentaryGroups = $this->parliamentaryGroupModel->getAllParliamentaryGroupHomepagePaging(5);
-        $municipalities = $this->municipalitiesModel->getAllMunicipalitiesHomepagePaging(5);
-        $landmarks = $this->landmarkModel->getAllLandmarksHomepagePaging(5);
+        $parliamentaryGroups = $this->parliamentaryGroupModel->getAllParliamentaryGroupHomepagePaging();
+        $municipalities = $this->municipalitiesModel->getAllMunicipalitiesHomepagePaging();
+        $landmarks = $this->landmarkModel->getAllLandmarksHomepagePaging();
 
         return view('homepage.homepage')
             ->with('topNews', $topNews)

@@ -7,6 +7,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LandmarkController;
 use App\Http\Controllers\MunicipalityController;
 use App\Http\Controllers\ParliamentaryGroupController;
 
@@ -25,14 +26,16 @@ Route::get('/', [HomeController::class, 'homepage'])->name('homepage');
 Route::get('/category/{slug}', [NewsController::class, 'showCategory'])->name('category.show');
 Route::get('/news/{id}-{slug}', [NewsController::class, 'show'])->name('news.show');
 
+Route::get('/news', [NewsController::class, 'list'])->name('news.listing');
+
 /* Search */
 Route::post('/search', [SearchController::class, 'postSearch'])->name('search.post');
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 
 /* Static pages */
-Route::get('/contacts', [PageController::class, 'contacts'])->name('contacts');
-Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
+Route::get('/contacts', [PageController::class, 'contacts'])->name('contacts');
+Route::get('/{categoryName}', [PageController::class, 'listCategory'])->name('category.listing.layout');
 
 Route::get('/obshtinite/{id}', [PageController::class, 'municipality'])->name('municipality');
 Route::get('/oblasti/{id}', [PageController::class, 'area'])->name('area');
@@ -43,8 +46,12 @@ Route::get('/municipality/{slug}', [MunicipalityController::class, 'show'])->nam
 /* Area */
 Route::get('/area/{slug}', [AreaController::class, 'show'])->name('area.show');
 
+/* Landmark */
+Route::get('/landmarks', [LandmarkController::class, 'listAllLandmarks'])->name('landmark.listAllLandmarks');
+
 /* Parliamentary Group */
 Route::get('/parliamentary-group/{slug}', [ParliamentaryGroupController::class, 'show'])->name('parliamentaryGroup.show');
+Route::get('/parliamentary-groups', [ParliamentaryGroupController::class, 'show'])->name('parliamentaryGroup.list');
 
 /* OLD */
 

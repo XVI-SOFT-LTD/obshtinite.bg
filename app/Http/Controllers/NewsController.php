@@ -89,4 +89,16 @@ class NewsController extends Controller
             ->with('customClasses', true)
         ;
     }
+
+    public function list()
+    {
+        $news = $this->model->with([
+            'i18n',
+        ])
+            ->where('active', 1)
+            ->orderBy('created_at', 'desc')
+            ->limit(6);
+        
+        return $news;
+    }
 }

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 use App\Models\Author;
-use App\Http\Requests\Admin\AuthorRequest;
-use App\Http\Controllers\Admin\DynamicAdminDataTable;
 use App\Helpers\Helper;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\Admin\AuthorRequest;
+use App\Http\Controllers\Admin\AdminDataTable;
+use App\Http\Controllers\Admin\DynamicAdminDataTable;
 
 class AdminAuthorController extends AdminController
 {
@@ -31,9 +32,10 @@ class AdminAuthorController extends AdminController
 
     public function index(Request $request)
     {
-        $authors = $this->model->getAuthorsAdminAll($request);
+        $authors = $this->model->getAuthorsAdmin($request);
 
-        $dataTable = new DynamicAdminDataTable();
+        $dataTable = new AdminDataTable();
+        $dataTable->setPaginator($authors);
         $dataTable->setRoute($this->routes);
         $dataTable->setColumns([
             'fullname' => 'Имена на автора',
@@ -43,7 +45,6 @@ class AdminAuthorController extends AdminController
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
         ]);
-        $dataTable->setSkipSortableIds([3]);
         $dataTable->setRows($authors, [
             'fullname' => function ($author) {
                 return $author->i18n->fullname;

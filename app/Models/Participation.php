@@ -152,7 +152,7 @@ class Participation extends Model
 
         $builder->orderBy('id', 'desc');
 
-        return $builder->get();
+        return $builder->paginate(10);
     }
 
     /**

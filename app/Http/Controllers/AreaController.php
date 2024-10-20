@@ -20,4 +20,14 @@ class AreaController extends Controller
 
         return view('pages.area', compact('area'));
     }
+
+    public function listAllAreas()
+    {
+          // Извличаме всички активни области
+        $areas = $this->areaModel->where('active', 1)->with(['municipality.landmarks'])->get();
+        dd($areas);
+
+        // Връщаме изгледа с предадените области
+        return view('pages.area', compact('areas'));
+    }
 }

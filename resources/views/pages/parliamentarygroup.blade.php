@@ -1,7 +1,14 @@
 @php
-    $phones = array_filter([$municipality->contact_phone_one, $municipality->contact_phone_two]);
-    $longitude = $municipality->longitude;
-    $latitude = $municipality->latitude;
+    $address = urlencode($parliamentaryGroup->i18n->headquarters_address);
+    $affiliatedParties = $parliamentaryGroup->affiliatedParties;
+    $affiliatedPartiesNames = [];
+    if ($affiliatedParties->count() > 0) {
+        foreach ($affiliatedParties as $affiliatedParty) {
+            $affiliatedPartiesNames[] = $affiliatedParty->i18n->name;
+        }
+
+        $affiliatedPartiesNames = implode(', ', $affiliatedPartiesNames);
+    }
 @endphp
 @include('layouts.partials._head')
 <!DOCTYPE html>
@@ -9,7 +16,6 @@
 
 <body>
     @include('layouts.partials._before_header')
-    {{-- @dd($municipality->getDir()) --}}
     <!-- header -->
     <header class="flex flex-col overflow-x-hidden ">
         <div class="grid gird-cols-1 lg:grid-cols-3">
@@ -25,13 +31,12 @@
         <div class="flex items-center justify-between px-5 py-3 headline">
             <div class="flex items-center text-sm gap-1 text-stone-400">
                 <a class="text-black">Начало</a>/
-                <a class="text-black">Общини</a>/
-                <a class="text-stone-400">Община {{ $municipality->i18n->name }}</a>
+                <a class="text-black">Партия</a>/
+                <a class="text-stone-400"> {{ $parliamentaryGroup->i18n->name }}</a>
             </div>
         </div>
     </header>
     <!-- header -->
-
 
     <!-- grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-30 mt-10">
@@ -39,43 +44,53 @@
         <div class="flex flex-col gap-5 lg:col-span-2">
             <div class="grid grid-cols-1 gap-10 lg:grid-cols-3 px-5">
                 <div class="bg-red-600 w-full">
-                    <img alt="obshtina-snimka" src="{{ $municipality->getLogo() }}"
+                    <img alt="partia-snimka" src="{{ $parliamentaryGroup->getLogo() }}"
                         class="w-full h-full object-cover" />
 
                 </div>
                 <div class="flex flex-col gap-10 lg:col-span-2 px-5">
                     <div class="p-3 uppercase flex-center slanted-border-container shadow-xl w-full">
-                        <h1 class="text-center text-lg">Община {{ $municipality->i18n->name }}</h1>
+                        <h1 class="text-center text-lg">{{ $parliamentaryGroup->i18n->name }}</h1>
                     </div>
                     <div class="flex flex-col gap-3">
+                        @if (count($affiliatedParties) > 0)
+                            <div class="flex items-center gap-2">
+                                <strong>{{ trans('app.coalitionParties') }}:</strong>
+                                <p>{{ $affiliatedPartiesNames }}</p>
+                            </div>
+                        @endif
+                        @if ($parliamentaryGroup->seats_in_parliament)
+                            <div class="flex items-center gap-2">
+                                <strong>{{ trans('app.numberOfSeats') }}:</strong>
+                                <p>{{ $parliamentaryGroup->seats_in_parliament }}</p>
+                            </div>
+                        @endif
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-phone"></i>
-                            <p>{{ implode(' / ', $phones) }}</p>
+                            <p>{{ $parliamentaryGroup->contact_phone }}</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-map-pin"></i>
-                            <p>{!! $municipality->i18n->address !!}</p>
+                            <p>{!! $parliamentaryGroup->i18n->headquarters_address !!}</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fa-regular fa-envelope"></i>
-                            <p>{!! $municipality->contact_email !!}</p>
+                            <p>{!! $parliamentaryGroup->contact_email !!}</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-globe"></i>
                             <p>
-                                @if ($municipality->website)
-                                    <a href="{{ $municipality->website }}" target="_blank"
-                                        rel="noopener noreferrer">{{ $municipality->website }}</a>
+                                @if ($parliamentaryGroup->website)
+                                    <a href="{{ $parliamentaryGroup->website }}" target="_blank"
+                                        rel="noopener noreferrer">{{ $parliamentaryGroup->website }}</a>
                                 @endif
                             </p>
                         </div>
                         <div class="flex items-center gap-2">
-                            {{-- <i class="fa-solid fa-share-nodes"></i>
-                            <i class="fa-brands fa-facebook-f"></i>
-                            <i class="fa-regular fa-envelope"></i> --}}
-                            <a href="mailto:{{ $municipality->contact_email }}"><i class="fa-solid fa-envelope"></i></a>
-                            @if ($municipality->social_media_links)
-                                @foreach ($municipality->social_media_links as $network => $url)
+                            <a href="mailto:{{ $parliamentaryGroup->contact_email }}"><i
+                                    class="fa-solid fa-envelope"></i></a>
+                            @if ($parliamentaryGroup->social_media_links)
+                                @foreach ($parliamentaryGroup->social_media_links as $network => $url)
                                     <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
                                         <i class="fa-brands fa-{{ $network }}"></i>
                                     </a>
@@ -89,11 +104,11 @@
             </div>
 
 
-            @if ($municipality->gallery->count() > 0)
+            @if ($parliamentaryGroup->gallery->count() > 0)
                 <!-- multiple pictures swiper component -->
                 <div class="swiper mySwiperTwo w-full h-[250px]">
                     <div class="swiper-wrapper">
-                        @foreach ($municipality->gallery as $image)
+                        @foreach ($parliamentaryGroup->gallery as $image)
                             <div class="swiper-slide">
                                 <img src="{{ asset($image->getImage(445)) }}" alt="Gallery Image" />
                             </div>
@@ -107,53 +122,13 @@
 
 
             <!-- custom navbar component -->
-
             <ul class="bg-green hidden lg:flex justify-start gap-20 items-center custom-navbar-component">
-                <li class="active" id="tab-party">За Общината</li>
-                <li id="tab-coalitions">Кметства</li>
-                <li id="tab-europrojects">Европроекти</li>
-                <li id="tab-inquiry">Запитване</li>
+                <li class="active">За Партията</li>
             </ul>
-
-            <div class="flex flex-col gap-3 px-5" id="content-party">
-                <p>{!! html_entity_decode($municipality->i18n->description) !!}</p>
-            </div>
-
-            <div class="flex flex-col gap-3 px-5 hidden" id="content-coalitions">
-                <p>Кметствата в нашата община играят ключова роля в управлението и развитието на местните общности. Те
-                    предоставят важни услуги и подкрепа на жителите, като същевременно работят за подобряване на
-                    инфраструктурата и качеството на живот.</p>
-            </div>
-
-            <div class="flex flex-col gap-3 px-5 hidden" id="content-europrojects">
-                <p>Европейските проекти са важен инструмент за финансиране и развитие на различни инициативи в нашата
-                    община. Те подпомагат реализирането на проекти в областта на инфраструктурата, образованието,
-                    културата и околната среда.</p>
-            </div>
-
-            <div class="flex flex-col gap-3 px-5 hidden" id="content-inquiry">
-                <p>Ако имате въпроси или нужда от допълнителна информация, не се колебайте да се свържете с нас. Нашият
-                    екип е на разположение да ви помогне и да отговори на вашите запитвания.</p>
-            </div>
-
-
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d5914.955480934349!2d{{ $longitude }}!3d{{ $latitude }}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e0!3m2!1sbg!2sbg!4v1721156789591!5m2!1sbg!2sbg"
-                width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"></iframe>
-
-
-            <div class="flex flex-col gap-3 text-center white-bg-gradient py-3">
-                <div class="relative bg-red w-full text-center text-white px-5 lg:px-0">
-                    <button
-                        class="absolute left-0 white-button-bg-gradient text-black h-[100%] px-5">Забележителности</button>
-                    <p class="max-w-[1500px] mx-auto  py-5">Община Айтос | Община Айтос | Община Айтос | Община Айтос |
-                        Община Айтос |
-                    </p>
-                </div>
+            <div class="flex flex-col gap-3 px-5">
+                <p>{!! html_entity_decode($parliamentaryGroup->i18n->description) !!}</p>
             </div>
         </div>
-        
 
 
         <!-- left side -->
@@ -202,7 +177,6 @@
         </div>
     </div>
     <!-- grid -->
-
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="{{ config('app.paths.js') }}/app.js"></script>

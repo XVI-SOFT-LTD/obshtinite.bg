@@ -11,10 +11,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
+use App\Models\ParticipationsCategories;
+use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
 use App\Http\Requests\Admin\AdminParticipationsRequest;
-use App\Models\ParticipationsCategories;
 
 class AdminParticipationsController extends AdminController
 {
@@ -46,7 +47,8 @@ class AdminParticipationsController extends AdminController
     {
         $participations = $this->model->getAdminAll($request);
 
-        $dataTable = new DynamicAdminDataTable();
+        $dataTable = new AdminDataTable();
+        $dataTable->setPaginator($participations);
         $dataTable->setRoute($this->routes);
         $dataTable->setColumns([
             'fullname' => 'Име на участието',
@@ -57,9 +59,7 @@ class AdminParticipationsController extends AdminController
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
         ]);
-        
-        $dataTable->setSkipSortableIds([2]);
-    
+            
         $dataTable->setRows($participations, [
             'name' => function ($participations) {
                 return $participations->i18n->name;

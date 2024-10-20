@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
+use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
 use App\Http\Requests\Admin\AdminMunicipalitiesRequest;
@@ -44,7 +45,8 @@ class AdminMunicipalitiesController extends AdminController
     {
         $municipilities = $this->model->getAdminAll($request);
 
-        $dataTable = new DynamicAdminDataTable();
+        $dataTable = new AdminDataTable();
+        $dataTable->setPaginator($municipilities);
         $dataTable->setRoute($this->routes);
         $dataTable->setColumns([
             'fullname' => 'Име на община',
@@ -53,7 +55,6 @@ class AdminMunicipalitiesController extends AdminController
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
         ]);
-        $dataTable->setSkipSortableIds([2]);
         $dataTable->setRows($municipilities, [
             'name' => function ($municipilities) {
                 return $municipilities->i18n->name;

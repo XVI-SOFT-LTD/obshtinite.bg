@@ -115,3 +115,13 @@
     'line' => true,
     'multiple' => true,
 ])
+
+@include('admin.developer.fields._social_media_input', [
+    'label' => 'Website',
+    'id' => 'website',
+    'name' => 'website',
+    'value' => old('website', $object->website ?? null),
+    'hint' => 'Сайт на новината',
+    'line' => true,
+    'required' => false,
+])

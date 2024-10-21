@@ -1,6 +1,5 @@
 <!-- cards -->
 @php
-    // dd($news);
     $text =
         'Lorem ipsum dolor sit amet, morbi lacus posuere volutpat venenatis vitae, ipsum habitasse ante, tristique ante vestibulum nec. Maecenas at, mollis velit metus, dolor mollis justo arcu justo non. Eleifend vestibulum risus mattis lacinia magna, sem sollicitudin nec';
 @endphp

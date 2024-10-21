@@ -15,7 +15,7 @@
 <html lang="en">
 
 <body>
-    @include('layouts.partials._before_header')
+    @include('layouts.partials._header')
     <!-- header -->
     <header class="flex flex-col overflow-x-hidden ">
         <div class="grid gird-cols-1 lg:grid-cols-3">
@@ -28,12 +28,14 @@
                 <div class="swiper-button-prev"></div>
             </div>
         </div>
-        <div class="flex items-center justify-between px-5 py-3 headline">
-            <div class="flex items-center text-sm gap-1 text-stone-400">
-                <a class="text-black">Начало</a>/
-                <a class="text-black">Партия</a>/
-                <a class="text-stone-400"> {{ $parliamentaryGroup->i18n->name }}</a>
-            </div>
+        <div class="flex items-center justify-start gap-10 headline">
+            <h1 class="uppercase font-light text-black bg-white px-10 py-6 white-button-bg-gradient">
+                <a href="{{ url('/') }}" class="text-black">{{ trans('app.homepage') }}</a> /
+                <a href="{{ url('/listing/parliamentary-groups') }}"
+                    class="text-black">{{ trans('app.parliamentaryGroups') }}</a>
+                /
+                {{ $parliamentaryGroup->i18n->name }}
+            </h1>
         </div>
     </header>
     <!-- header -->
@@ -77,15 +79,15 @@
                             <i class="fa-regular fa-envelope"></i>
                             <p>{!! $parliamentaryGroup->contact_email !!}</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-globe"></i>
-                            <p>
-                                @if ($parliamentaryGroup->website)
+                        @if ($parliamentaryGroup->website)
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-globe"></i>
+                                <p>
                                     <a href="{{ $parliamentaryGroup->website }}" target="_blank"
                                         rel="noopener noreferrer">{{ $parliamentaryGroup->website }}</a>
-                                @endif
-                            </p>
-                        </div>
+                                </p>
+                            </div>
+                        @endif
                         <div class="flex items-center gap-2">
                             <a href="mailto:{{ $parliamentaryGroup->contact_email }}"><i
                                     class="fa-solid fa-envelope"></i></a>
@@ -123,7 +125,7 @@
 
             <!-- custom navbar component -->
             <ul class="bg-green hidden lg:flex justify-start gap-20 items-center custom-navbar-component">
-                <li class="active">За Партията</li>
+                <li class="active">{{ trans('app.aboutParliamentaryGroup') }}</li>
             </ul>
             <div class="flex flex-col gap-3 px-5">
                 <p>{!! html_entity_decode($parliamentaryGroup->i18n->description) !!}</p>
@@ -137,7 +139,7 @@
         <!-- right side -->
         <div class="flex flex-col gap-5">
             <div class="flex items-center justify-between px-5 bg-green w-full p-3 text-white uppercase text-xl">
-                <h1>Полезно</h1>
+                <h1>{{ trans('app.useful') }}</h1>
             </div>
 
             <div class="2xl:px-14 flex flex-col gap-5">

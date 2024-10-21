@@ -6,10 +6,10 @@
 (function ($) {
 
     $(document).ready(function ($) {
-        // Search Icon
-        $(document).on('click', '.search .icon-search', function () {
-            $('header .search_form').toggleClass('visible');
+        document.querySelector('.icon-search').addEventListener('click', function () {
+            document.querySelector('.search div').classList.toggle('hidden');
         });
+
 
         // Mobile Btn
         $(document).on('click', '.mobile_button_nav', function () {

@@ -1,9 +1,5 @@
 @include('layouts.partials._head')
-<!DOCTYPE html>
-<html lang="bg">
-
-
-@include('layouts.partials._before_header')
+@include('layouts.partials._header')
 <header class="flex flex-col overflow-x-hidden ">
     <div class="grid gird-cols-1 lg:grid-cols-3">
         <div class="flex justify-center items-center p-5">
@@ -15,11 +11,12 @@
             <div class="swiper-button-prev"></div>
         </div>
     </div>
-   <div class="flex items-center justify-start gap-10 headline">
-    <h1 class="uppercase font-light text-black bg-white px-10 py-6 white-button-bg-gradient">
-        {{ trans('app.' . $categoryName) }}
-    </h1>
-</div>
+    <div class="flex items-center justify-start gap-10 headline">
+        <h1 class="uppercase font-light text-black bg-white px-10 py-6 white-button-bg-gradient">
+            <a href="{{ url('/') }}" class="text-black">{{ trans('app.homepage') }}</a> /
+            {{ trans('app.' . $categoryName) }}
+        </h1>
+    </div>
 </header>
 
 <main class="container mx-auto mt-10">
@@ -32,8 +29,15 @@
                     <p class="text-sm mb-3">
                         {{ \Illuminate\Support\Str::limit(html_entity_decode(strip_tags($model->i18n->description)), 100) }}
                     </p>
-                    <a href="{{ route($routeName, $model->slug) }}"
-                        class="inline-block bg-blue-600 text-white py-2 px-3 rounded hover:bg-blue-700">Виж още</a>
+                    @php
+                        $routeParams = $model->slug;
+                        if ($model instanceof \App\Models\News) {
+                            $routeParams = ['id' => $model->id, 'slug' => $model->slug];
+                        }
+                    @endphp
+
+                    <a href="{{ route($routeName, $routeParams) }}"
+                        class="inline-block bg-[#6d7b40] text-white py-2 px-3 rounded  hover:shadow-lg">{{ trans('app.seeMore') }}</a>
                 </div>
             </div>
         @endforeach
@@ -44,11 +48,11 @@
             <ul class="flex pl-0 list-none rounded my-2">
                 @if ($models->onFirstPage())
                     <li class="disabled"><span
-                            class="relative block py-2 px-3 rounded leading-tight text-gray-500 bg-white border border-gray-300 cursor-not-allowed">Назад</span>
+                            class="relative block py-2 px-3 rounded leading-tight text-gray-500 bg-white border border-gray-300 cursor-not-allowed">{{ trans('app.previous') }}</span>
                     </li>
                 @else
                     <li><a href="{{ $models->previousPageUrl() }}"
-                            class="relative block py-2 px-3 rounded leading-tight text-gray-700 bg-white border border-gray-300 hover:bg-gray-200">Назад</a>
+                            class="relative block py-2 px-3 rounded leading-tight text-gray-700 bg-white border border-gray-300 hover:bg-gray-200">{{ trans('app.previous') }}</a>
                     </li>
                 @endif
 
@@ -93,11 +97,11 @@
 
                 @if ($models->hasMorePages())
                     <li><a href="{{ $models->nextPageUrl() }}"
-                            class="relative block py-2 px-3 rounded leading-tight text-gray-700 bg-white border border-gray-300 hover:bg-gray-200">Напред</a>
+                            class="relative block py-2 px-3 rounded leading-tight text-gray-700 bg-white border border-gray-300 hover:bg-gray-200">{{ trans('app.next') }}</a>
                     </li>
                 @else
                     <li class="disabled"><span
-                            class="relative block py-2 px-3 rounded leading-tight text-gray-500 bg-white border border-gray-300 cursor-not-allowed">Напред</span>
+                            class="relative block py-2 px-3 rounded leading-tight text-gray-500 bg-white border border-gray-300 cursor-not-allowed">{{ trans('app.next') }}</span>
                     </li>
                 @endif
             </ul>

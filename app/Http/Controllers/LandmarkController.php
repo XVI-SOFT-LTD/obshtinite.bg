@@ -22,4 +22,11 @@ class LandmarkController extends Controller
         // Връщаме изгледа с предадените области
         return view('pages.landmarks-listing', compact('landmarks'));
     }
+
+    public function show(string $slug)
+    {
+        $landmark = $this->landmarkModel->where('slug', $slug)->firstOrFail();
+        
+        return view('pages.landmark', compact('landmark'));
+    }
 }

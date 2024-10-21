@@ -3,8 +3,7 @@
 <html lang="en">
 
 <body>
-    @include('layouts.partials._before_header')
-    {{-- @include('layouts.partials._header') --}}
+    @include('layouts.partials._header')
 
     <!-- header -->
     <header class="flex flex-col overflow-x-hidden ">
@@ -19,9 +18,11 @@
             </div>
         </div>
         <div class="flex items-center justify-start gap-10 headline">
-            <h1 class="uppercase font-light text-black bg-white px-10 py-6 white-button-bg-gradient">Oбласт
-                {{ $area->i18n->name }}</h1>
-            <button class="h-full text-sm">Начало | {{ $area->i18n->name }}</button>
+            <h1 class="uppercase font-light text-black bg-white px-10 py-6 white-button-bg-gradient">
+                <a href="{{ url('/') }}" class="text-black">{{ trans('app.homepage') }}</a> /
+                <a href="{{ url('/listing/areas') }}" class="text-black">{{ trans('app.areas') }}</a> /
+                {{ $area->i18n->name }}
+            </h1>
         </div>
     </header>
     <!-- header -->
@@ -69,33 +70,38 @@
                 <div class="swiper-button-prev"></div>
             </div>
         @endif
-        <h1 class="text-2xl  p-5">Новините от област {{ $area->i18n->name }}</h1>
+        @if ($area->news->count() > 0)
+            <h1 class="text-2xl  p-5">{{ trans('app.newsFromArea') }} {{ $area->i18n->name }}</h1>
+        @endif
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 lg:col-span-2 gap-5 p-5" id="blog-wrapper">
-        @foreach ($area->news as $item)
-            <div class="flex flex-col lg:flex-row gap-3 w-full bg-[#E9E9E9] group hover:bg-[#383838] transition-all"
-                key="{{ $loop->index }}">
-                <img src="{{ $item->getLogo() }}" alt="{{ $item->i18n->title }}" />
-                <div class="flex flex-col gap-1 py-2 px-2 lg:px-0">
-                    <p class="font-light group-hover:text-white">
-                        {{ \Carbon\Carbon::parse($item->publish_date)->format('Y-m-d') }}</p>
-                    <h1 class="font-bold text-lg group-hover:text-white">{{ $item->i18n->title }}</h1>
-                    <p class="text-sm max-w-[350px] group-hover:text-white">
-                        {{ Str::limit(strip_tags($item->i18n->description), 70, '...') }}</p>
-                    <a href="{{ $item->website }}" target="_blank" class="view">{{ trans('app.readMore') }}</a>
-                    {{-- <button  class="w-max text-sm text-red group-hover:text-white">trans('app.readMore')</button> --}}
+    @if ($area->news->count() > 0)
+        <div class="grid grid-cols-1 sm:grid-cols-3 lg:col-span-2 gap-5 p-5" id="blog-wrapper">
+            @foreach ($area->news as $item)
+                <div class="flex flex-col lg:flex-row gap-3 w-full bg-[#E9E9E9] group hover:bg-[#383838] transition-all"
+                    key="{{ $loop->index }}">
+                    <img src="{{ $item->getLogo() }}" alt="{{ $item->i18n->title }}" />
+                    <div class="flex flex-col gap-1 py-2 px-2 lg:px-0">
+                        <p class="font-light group-hover:text-white">
+                            {{ \Carbon\Carbon::parse($item->publish_date)->format('Y-m-d') }}</p>
+                        <h1 class="font-bold text-lg group-hover:text-white">{{ $item->i18n->title }}</h1>
+                        <p class="text-sm max-w-[350px] group-hover:text-white">
+                            {{ Str::limit(strip_tags($item->i18n->description), 70, '...') }}</p>
+                        <a href="{{ $item->website }}" target="_blank" class="view">{{ trans('app.readMore') }}</a>
+                        {{-- <button  class="w-max text-sm text-red group-hover:text-white">trans('app.readMore')</button> --}}
+                    </div>
                 </div>
-            </div>
-        @endforeach
-    </div>
+            @endforeach
+        </div>
+    @endif
 
     <!-- grid -->
 
     <!-- green container -->
     <div class="flex flex-col gap-3 text-center white-bg-gradient py-3">
         <div class="relative bg-green w-full text-center text-white px-5 lg:px-0">
-            <button class="absolute left-0 white-button-bg-gradient text-black h-[100%] px-5">Забележителности</button>
+            <button
+                class="absolute left-0 white-button-bg-gradient text-black h-[100%] px-5">{{ trans('app.landmarks') }}</button>
             <p class="max-w-[1500px] mx-auto py-5">
                 @foreach ($area->municipality as $municipality)
                     {{ $municipality->i18n->name }} @if (!$loop->last)
@@ -104,7 +110,9 @@
                 @endforeach
             </p>
         </div>
-        <h1 class="text-sm lg:text-lg">Природни Забележителности | Aрхитектурни забележителности | Музии</h1>
+        <h1 class="text-sm lg:text-lg">{{ trans('app.naturalSights') }} | <span
+                class="underline">{{ trans('app.architecturalLandmarks') }}</span> |
+            {{ trans('app.museums') }}</h1>
     </div>
     <div class="grid gird-cols-1 lg:grid-cols-2 gap-32">
         <!-- left side -->

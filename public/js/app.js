@@ -2,15 +2,22 @@ import {
   // blogBoxes,
   navbarLinks,
   // sidebarNews,
-  // swiperHeaderSwipers,
+  swiperHeaderSwipers,
 } from "./static.js";
 
 const navbarLinksWrapper = document.getElementById("navbarlinks-wrapper");
-// const swiperWrapperHeader = document.getElementById("swiper-wrapper-header");
+const mobileNavbarLinksWrapper = document.getElementById("mobile-navbarlinks-wrapper");
+const swiperWrapperHeader = document.getElementById("swiper-wrapper-header");
 // const blogWrapper = document.getElementById("blog-wrapper");
-// const sidenewsWrapper = document.getElementById("sidenews-wrapper");
+const sidenewsWrapper = document.getElementById("sidenews-wrapper");
 
 navbarLinksWrapper.innerHTML = navbarLinks
+  .map((link, id) => {
+    return `<li key=${id}><a href=${link.path}>${link.name}</a></li>`;
+  })
+  .join("");
+
+mobileNavbarLinksWrapper.innerHTML = navbarLinks
   .map((link, id) => {
     return `<li key=${id}><a href=${link.path}>${link.name}</a></li>`;
   })
@@ -38,18 +45,18 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-// swiperWrapperHeader.innerHTML = swiperHeaderSwipers
-//   .map((swiper, id) => {
-//     return `<div key=${id} class="swiper-slide relative"><img src=${swiper.bg} /><h1 class="text-white drop-shadow-xl text-3xl absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2">${swiper.text}</h1></div>`;
-//   })
-//   .join("");
+swiperWrapperHeader.innerHTML = swiperHeaderSwipers
+  .map((swiper, id) => {
+    return `<div key=${id} class="swiper-slide relative"><img src=${swiper.bg} /><h1 class="text-white drop-shadow-xl text-3xl absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2">${swiper.text}</h1></div>`;
+  })
+  .join("");
 
 // blogWrapper.innerHTML = blogBoxes
 //   .map((box, id) => {
 //     const { image, name, date, text, heading } = box;
 
 //     return `
-    
+
 //         <div class="flex flex-col lg:flex-row gap-3 w-full bg-[#E9E9E9] group hover:bg-[#383838] transition-all" key=${id}>
 //             <img src=${image} alt=${name}/>
 //             <div class="flex flex-col gap-1 py-2 px-2 lg:px-0">
@@ -61,11 +68,11 @@ document.addEventListener('DOMContentLoaded', function () {
 //                 <button class="w-max text-sm text-red group-hover:text-white">Прочети повече</button>
 //             </div>
 //         </div>
-    
+
 //     `;
 //   })
 //   .join("");
-  
+
 // sidenewsWrapper.innerHTML = sidebarNews
 //   .map((news, id) => {
 //     return `

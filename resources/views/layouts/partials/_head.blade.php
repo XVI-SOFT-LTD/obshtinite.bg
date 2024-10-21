@@ -9,6 +9,8 @@
     href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
     rel="stylesheet">
 <link rel="stylesheet" href="{{ config('app.paths.css') }}/style.css">
+<link rel="stylesheet" href="{{ config('app.paths.css') }}/style-redesign.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 
 <script src="{{ config('app.paths.js') }}/modernizr.js"></script>
@@ -16,6 +18,7 @@
 <script src="{{ config('app.paths.js') }}/jquery-3.2.1.min.js"></script>
 <script type="module" src="{{ config('app.paths.js') }}/static.js"></script>
 <script type="module" src="{{ config('app.paths.js') }}/app.js"></script>
+<script type="module" src="{{ config('app.paths.js') }}/main.js"></script>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

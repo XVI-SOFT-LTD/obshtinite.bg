@@ -70,21 +70,25 @@ class PageController extends Controller
     public function listCategory(string $categoryName) {
         $routeName = '';
          switch ($categoryName) {
-            // case 'landmarks':
-            //     $models = Landmark::all();
-            //     $routeName = 'landmark.show';
-            //     break;
+            case 'landmarks':
+                $models = Landmark::paginate(12);
+                $routeName = 'landmark.show';
+                break;
             case 'municipalities':
                 $models = Municipality::paginate(12);
                 $routeName = 'municipality.show';
                 break;
-            case 'parliamentaryGroups':
+            case 'parliamentary-groups':
                 $models = ParliamentaryGroup::paginate(12);
                 $routeName = 'parliamentaryGroup.show';
                 break;
             case 'areas':
                 $models = Area::paginate(12);
                 $routeName = 'area.show';
+                break;
+            case 'news':
+                $models = News::paginate(12);
+                $routeName = 'news.show';
                 break;
             default:
                 $routeName = '/';

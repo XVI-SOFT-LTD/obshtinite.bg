@@ -67,27 +67,7 @@ class NewsController extends Controller
             ->where('id', $id)
             ->firstOrFail();
 
-        $this->breadcrumbs[] = ['name' => $news->i18n->title];
-
-        $news->increment('views');
-        $news->increment('views_day');
-        $news->increment('views_week');
-        $news->increment('views_month');
-        $news->increment('views_year');
-
-        /* $related = $news->related->where('active', 1)->where('available', 1);
-        if ($news->related->isEmpty()) {
-        $related = $this->model->moreFromCategories($news, 12);
-        } */
-
-        return view('news.show')
-            ->with('news', $news)
-            ->with('previousNews', $news->previous())
-            ->with('nextNews', $news->next())
-            #->with('related', $related)
-            ->with('breadcrumbs', $this->breadcrumbs)
-            ->with('customClasses', true)
-        ;
+           return redirect()->away($news->website);
     }
 
     public function list()

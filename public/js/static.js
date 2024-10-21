@@ -5,37 +5,37 @@ export const navbarLinks = [
     },
     {
         name: 'Новини',
-        path: '/page/novini'
+        path: '/listing/news'
     },
     {
         name: 'Области',
-        path: '/page/oblasti'
+        path: '/listing/areas'
     },
     {
         name: 'Партии',
-        path: ''
+        path: '/listing/parliamentary-groups'
     },
     {
         name: 'Забележителности',
-        path: ''
+        path: '/listing/landmarks'
     },
 ]
 
 
-// export const swiperHeaderSwipers = [
-//     {
-//         bg: '/theme/images/swiper.png',
-//         text: 'НАРОДЕН ТЕАТЪР ИВАН ВАЗОВ'
-//     },
-//     {
-//         bg: '/theme/images/swiper-2.jpg',
-//         text: 'АНТИЧЕН ТЕАТЪР ПЛОВДИВ'
-//     },
-//     {
-//         bg: '/theme/images/swiper-3.jpg',
-//         text: 'СТРИПТИЙЗ КЛУБ ВЕЛВЕТ'
-//     },
-// ]
+export const swiperHeaderSwipers = [
+    {
+        bg: '/theme/images/swiper.png',
+        text: 'НАРОДЕН ТЕАТЪР ИВАН ВАЗОВ'
+    },
+    {
+        bg: '/theme/images/swiper-2.jpg',
+        text: 'АНТИЧЕН ТЕАТЪР ПЛОВДИВ'
+    },
+    {
+        bg: '/theme/images/swiper-3.jpg',
+        text: 'СТРИПТИЙЗ КЛУБ ВЕЛВЕТ'
+    },
+]
 
 // export const blogBoxes = [
 //     {

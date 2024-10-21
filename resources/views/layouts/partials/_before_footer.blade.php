@@ -24,7 +24,7 @@
                                 </p>
                                 <a href="{{ route('municipality.show', $municipality->slug) }}"
                                     class="w-max text-sm text-red group-hover:text-white">
-                                    Виж още <i class="fa-solid fa-chevron-right"></i>
+                                    {{ trans('app.seeMore') }} <i class="fa-solid fa-chevron-right"></i>
                                 </a>
                             </div>
                         </div>
@@ -36,7 +36,7 @@
         <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between px-5 bg-red w-full p-3 text-white">
                 <h1 class="uppercase text-xl">{{ trans('app.parliamentaryGroups') }}</h1>
-                <a href="{{ route('category.listing.layout', ['categoryName' => 'parliamentaryGroups']) }}"
+                <a href="{{ route('category.listing.layout', ['categoryName' => 'parliamentary-groups']) }}"
                     class="uppercase text-lg">
                     <button>{{ trans('app.viewAll') }}</button>
                 </a>
@@ -69,8 +69,9 @@
         </div>
         <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between px-5 bg-green w-full p-3 text-white">
-                <h1 class="w-full text-center">Природни забележителности | <span class="underline">Архитектурни
-                        забележителности</span> | Музеи</h1>
+                <h1 class="w-full text-center">{{ trans('app.naturalSights') }} | <span
+                        class="underline">{{ trans('app.architecturalLandmarks') }}</span> |
+                    {{ trans('app.museums') }}</h1>
                 <a href="{{ route('category.listing.layout', ['categoryName' => 'landmarks']) }}"
                     class="uppercase w-1/3 flex justify-end">
                     <button>{{ trans('app.viewAll') }}</button>
@@ -86,9 +87,14 @@
                                 <p class="text-sm">
                                     {{ \Illuminate\Support\Str::limit(html_entity_decode(strip_tags($landmark->i18n->description)), 50) }}
                                 </p>
-                                <button
+                                {{-- <button
                                     class="transition-all py-2 px-3 w-max text-sm text-red group-hover:text-white group-hover:w-full group-hover:flex group-hover:justify-between group-hover:items-center group-hover:bg-[#333333]">{{ trans('app.seeMore') }}<i
-                                        class="fa-solid fa-chevron-right"></i></button>
+                                        class="fa-solid fa-chevron-right"></i></button> --}}
+
+                                <a href="{{ route('landmark.show', $landmark->slug) }}"
+                                    class="transition-all py-2 px-3 w-max text-sm text-red group-hover:text-white group-hover:w-full group-hover:flex group-hover:justify-between group-hover:items-center group-hover:bg-[#333333]"">
+                                    {{ trans('app.seeMore') }}<i class="fa-solid fa-chevron-right"></i>
+                                </a>
                             </div>
                         </div>
                     @endforeach
@@ -103,7 +109,7 @@
     <!-- right side -->
     <div class="flex flex-col gap-5">
         <div class="flex items-center justify-between px-5 bg-green w-full p-3 text-white uppercase text-xl">
-            <h1>Полезно</h1>
+            <h1>{{ trans('app.useful') }}</h1>
         </div>
 
         <!-- side news -->

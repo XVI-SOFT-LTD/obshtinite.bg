@@ -8,6 +8,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LandmarkController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\MunicipalityController;
 use App\Http\Controllers\ParliamentaryGroupController;
 
@@ -35,7 +36,7 @@ Route::get('/search', [SearchController::class, 'search'])->name('search');
 /* Static pages */
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
 Route::get('/contacts', [PageController::class, 'contacts'])->name('contacts');
-Route::get('/{categoryName}', [PageController::class, 'listCategory'])->name('category.listing.layout');
+Route::get('/listing/{categoryName}', [PageController::class, 'listCategory'])->name('category.listing.layout');
 
 Route::get('/obshtinite/{id}', [PageController::class, 'municipality'])->name('municipality');
 Route::get('/oblasti/{id}', [PageController::class, 'area'])->name('area');
@@ -48,6 +49,7 @@ Route::get('/area/{slug}', [AreaController::class, 'show'])->name('area.show');
 
 /* Landmark */
 Route::get('/landmarks', [LandmarkController::class, 'listAllLandmarks'])->name('landmark.listAllLandmarks');
+Route::get('/landmark/{slug}', [LandmarkController::class, 'show'])->name('landmark.show');
 
 /* Parliamentary Group */
 Route::get('/parliamentary-group/{slug}', [ParliamentaryGroupController::class, 'show'])->name('parliamentaryGroup.show');
@@ -70,6 +72,8 @@ Route::get('/standard', [HomeController::class, 'standard'])->name('standard');
 Route::get('/single-standard.html', [HomeController::class, 'standard'])->name('standard');
 
 Route::get('/loginadmin', [HomeController::class, 'loginadmin'])->name('loginadmin');
+
+Route::get('lang/{locale}', [LanguageController::class, 'switchLang'])->name('lang.switch');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -7,16 +7,11 @@
     @include('layouts.partials._header')
 
     <header class="flex flex-col overflow-x-hidden bg-gray-200 shadow-md">
-        <div class="grid grid-cols-1">
-            <div class="flex justify-center items-center p-5">
-                <img alt="bg" src="{{ asset('theme/images/logo.png') }}" class="mx-auto" />
-            </div>
-        </div>
-        <div class="flex items-center justify-between px-5 py-3 bg-white shadow-sm headline">
-            <div class="flex items-center text-sm gap-1 text-gray-500">
-                <a href="/" class="text-black">Начало</a> /
-                <a class="text-black">{{ $page->i18n->title }}</a>
-            </div>
+        <div class="flex items-center justify-start gap-10 headline">
+            <h1 class="uppercase font-light text-black bg-white px-10 py-6 white-button-bg-gradient">
+                <a href="{{ url('/') }}" class="text-black">{{ trans('app.homepage') }}</a> /
+                {{ $page->i18n->title }}
+            </h1>
         </div>
     </header>
 

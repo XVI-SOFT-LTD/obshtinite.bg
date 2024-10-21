@@ -3,14 +3,13 @@
 <html lang="en">
 
 <body class="bg-gray-100">
-    @include('layouts.partials._before_header')
-    {{-- @include('layouts.partials._header') --}}
+    @include('layouts.partials._header')
 
-    <div class="flex items-center justify-between px-5 py-3 bg-white shadow-sm headline">
-        <div class="flex items-center text-sm gap-1 text-gray-500">
-            <a href="/" class="text-black">Начало</a> /
-            <a class="text-black">{{ $page->i18n->title }}</a>
-        </div>
+    <div class="flex items-center justify-start gap-10 headline">
+        <h1 class="uppercase font-light text-black bg-white px-10 py-6 white-button-bg-gradient">
+            <a href="{{ url('/') }}" class="text-black">{{ trans('app.homepage') }}</a> /
+            {{ $page->i18n->title }}
+        </h1>
     </div>
     <main class="container mx-auto px-4 mt-10">
 

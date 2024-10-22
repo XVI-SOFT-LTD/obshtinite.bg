@@ -31,7 +31,8 @@ Route::get('/news', [NewsController::class, 'list'])->name('news.listing');
 
 /* Search */
 Route::post('/search', [SearchController::class, 'postSearch'])->name('search.post');
-Route::get('/search', [SearchController::class, 'search'])->name('search');
+Route::get('/search', [SearchController::class, 'search'])->name('search.get');
+
 
 /* Static pages */
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
@@ -74,6 +75,7 @@ Route::get('/single-standard.html', [HomeController::class, 'standard'])->name('
 Route::get('/loginadmin', [HomeController::class, 'loginadmin'])->name('loginadmin');
 
 Route::get('lang/{locale}', [LanguageController::class, 'switchLang'])->name('lang.switch');
+Route::get('/translations/{locale}', [LanguageController::class, 'getTranslations'])->name('translations.get');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

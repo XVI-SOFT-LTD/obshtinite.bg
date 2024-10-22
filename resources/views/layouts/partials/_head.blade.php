@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <meta charset="utf-8">
 <title>{{ env('APP_NAME') }}</title>
 <meta name="description" content="">
@@ -9,7 +9,6 @@
     href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
     rel="stylesheet">
 <link rel="stylesheet" href="{{ config('app.paths.css') }}/style.css">
-<link rel="stylesheet" href="{{ config('app.paths.css') }}/style-redesign.css">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 

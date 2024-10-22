@@ -130,8 +130,9 @@
                                         {{ \Illuminate\Support\Str::limit(html_entity_decode(strip_tags($landmark->i18n->description)), 50) }}
                                     </p>
                                     <button
-                                        class="transition-all py-2 px-3 w-max text-sm text-red group-hover:text-white group-hover:w-full group-hover:flex group-hover:justify-between group-hover:items-center group-hover:bg-[#333333]">Виж
-                                        още <i class="fa-solid fa-chevron-right"></i></button>
+                                        class="transition-all py-2 px-3 w-max text-sm text-red group-hover:text-white group-hover:w-full group-hover:flex group-hover:justify-between group-hover:items-center group-hover:bg-[#333333]">
+                                        {{ trans('app.seeMore') }}
+                                        <i class="fa-solid fa-chevron-right"></i></button>
                                 </div>
                             </div>
                         @endforeach

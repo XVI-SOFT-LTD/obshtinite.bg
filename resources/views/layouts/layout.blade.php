@@ -8,9 +8,9 @@
 <body id="top">
     @include('layouts.partials._header')
 
-    @include('layouts.partials._before_header')
+    @include('layouts.partials._header_sliders')
 
-    @include('layouts.partials._below_header')
+    @include('layouts.partials._information_block')
 
     @include('layouts.partials._before_footer')
 

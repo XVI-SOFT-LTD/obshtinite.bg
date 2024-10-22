@@ -64,4 +64,19 @@ return [
     'aboutParliamentaryGroup' => 'About the Parliamentary group',
     'newsFromArea' => 'The news from the area',
     'aboutMunicipality' => 'About the Municipality',
+    'more' => 'More',
+    'aboutUs' => 'About us',
+    'generalConditions' => 'General conditions',
+    'privacyPolicy' => 'Privacy policy',
+    'advertIsement' => 'Advertisement',
+    'contactUs' => 'Contact us',
+
+    'footerAddress' => 'Address: 26 Golash St, Sofia',
+    'footerPhone' => 'Phone: 0877758 96 89',
+    'footerEmail' => 'E-mail: team@emediaconsult.bg',
+
+    'articlesFooter' => 'Articles',
+    'videoFooter' => 'Video',
+    'search' => 'Search „ :word “',
+    'noFoundResults' => 'No found results. Please try with another word.',
 ];

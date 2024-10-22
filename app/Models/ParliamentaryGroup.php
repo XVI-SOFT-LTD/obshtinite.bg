@@ -96,6 +96,11 @@ class ParliamentaryGroup extends Model
         return AdminController::MAIN_DIR . self::DIR . '/' . intval($this->id / 1000) . '/';
     }
 
+    public function getUrl()
+    {
+        return route('parliamentaryGroup.show', ['slug' => $this->slug, 'id' => $this->id]);
+    }
+
     /**
      * Retrieves the logo of the parliamentary group.
      *
@@ -171,5 +176,50 @@ class ParliamentaryGroup extends Model
             ->orderBy('id', 'desc')
             ->whereNull('deleted_at')
             ->paginate($onPage);
+    }
+
+    /**
+     * Searches for parliamentary groups based on a given word.
+     * The search is performed in three stages:
+     * 1. Search in the 'name' field.
+     * 2. Search in the 'description' field.
+     * 3. Search in both 'name' and 'description' fields.
+     * 
+     * The search word is first converted from Latin to Cyrillic characters.
+     * The search is performed using MySQL's full-text search in BOOLEAN MODE.
+     * Results are ordered by the length of the matched field(s) in descending order.
+     * 
+     * @param string $word The search term to look for.
+     * @param int $limit The number of results to return per page. Default is 20.
+     * @return LengthAwarePaginator Paginated search results.
+     */
+    public function searchParliamentaryGroups(string $word, int $limit = 20): LengthAwarePaginator
+    {
+        $word = Helper::latinToCyrillic($word);
+
+        $word = '+' . $word . '*';
+
+        $titleOnly = $this->with(['i18n'])->where('active', 1)->whereHas('i18n', function ($query) use ($word) {
+            $query->whereRaw("MATCH(name) AGAINST(? IN BOOLEAN MODE)", [$word])
+                ->orderByRaw("LENGTH(name) DESC");
+        });
+
+        $descriptionOnly = $this->with(['i18n'])->where('active', 1)->whereHas('i18n', function ($query) use ($word) {
+            $query->whereRaw("MATCH(description) AGAINST(? IN BOOLEAN MODE)", [$word])
+                ->orderByRaw("LENGTH(description) DESC");
+        });
+
+        $titleAndDescription = $this->with(['i18n'])->where('active', 1)->whereHas('i18n', function ($query) use ($word) {
+            $query->whereRaw("MATCH(name,description) AGAINST(? IN BOOLEAN MODE)", [$word])
+                ->orderByRaw("(LENGTH(name) + LENGTH(description)) DESC");
+        });
+
+        $builder = $titleOnly
+            ->union($titleAndDescription)
+            ->union($descriptionOnly)
+        ;
+
+
+        return $builder->paginate($limit);
     }
 }

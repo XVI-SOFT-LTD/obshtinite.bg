@@ -1,25 +1,39 @@
-export const navbarLinks = [
-    {
-        name: 'Начало ',
-        path: '/'
-    },
-    {
-        name: 'Новини',
-        path: '/listing/news'
-    },
-    {
-        name: 'Области',
-        path: '/listing/areas'
-    },
-    {
-        name: 'Партии',
-        path: '/listing/parliamentary-groups'
-    },
-    {
-        name: 'Забележителности',
-        path: '/listing/landmarks'
-    },
-]
+export let navbarLinks = [];
+
+const locale = document.documentElement.lang;
+
+await loadTranslations(locale);
+
+// Функция за зареждане на JSON файл
+export async function loadTranslations(locale) {
+    const response = await fetch(`/translations/${locale}`);
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    const translations = await response.json();
+    navbarLinks = [
+        {
+            name: translations.home,
+            path: '/'
+        },
+        {
+            name: translations.news,
+            path: '/listing/news'
+        },
+        {
+            name: translations.areas,
+            path: '/listing/areas'
+        },
+        {
+            name: translations.parliamentary_groups,
+            path: '/listing/parliamentary-groups'
+        },
+        {
+            name: translations.landmarks,
+            path: '/listing/landmarks'
+        },
+    ];
+}
 
 
 export const swiperHeaderSwipers = [

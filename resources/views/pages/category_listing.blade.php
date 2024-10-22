@@ -25,7 +25,8 @@
             <div class="border rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow p-4">
                 <img src="{{ $model->getLogo() }}" alt="{{ $model->i18n->name }}" class="w-full h-48 object-cover">
                 <div class="p-3">
-                    <h2 class="text-lg font-bold mb-1">{{ $model->i18n->name }}</h2>
+                    <h2 class="text-lg font-bold mb-1">
+                        {{ $model instanceof App\Models\News ? $model->i18n->title : $model->i18n->name }}</h2>
                     <p class="text-sm mb-3">
                         {{ \Illuminate\Support\Str::limit(html_entity_decode(strip_tags($model->i18n->description)), 100) }}
                     </p>

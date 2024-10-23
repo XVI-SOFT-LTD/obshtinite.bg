@@ -2,18 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\News;
+use App\Models\User;
+use App\Models\Landmark;
+use App\Models\Municipality;
+use App\Models\ParliamentaryGroup;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\News;
 
 class HomeController extends Controller
 {
     private Model $newsModel;
+    private Model $parliamentaryGroupModel;
+    private Model $municipalitiesModel;
+    private Model $landmarkModel;
 
     public function __construct()
     {
         $this->newsModel = new News();
+        $this->parliamentaryGroupModel = new ParliamentaryGroup();
+        $this->municipalitiesModel = new Municipality();
+        $this->landmarkModel = new Landmark();
     }
 
     public function homepage()
@@ -26,10 +35,16 @@ class HomeController extends Controller
         }
 
         $news = $this->newsModel->getAllNewsHomepagePaging($excludedIds, 10);
+        $parliamentaryGroups = $this->parliamentaryGroupModel->getAllParliamentaryGroupHomepagePaging();
+        $municipalities = $this->municipalitiesModel->getAllMunicipalitiesHomepagePaging();
+        $landmarks = $this->landmarkModel->getAllLandmarksHomepagePaging();
 
         return view('homepage.homepage')
             ->with('topNews', $topNews)
             ->with('news', $news)
+            ->with('parliamentaryGroups', $parliamentaryGroups)
+            ->with('municipalities', $municipalities)
+            ->with('landmarks', $landmarks)
             ->with('homepage', true)
         ;
     }

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
+use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Requests\Admin\AdminAreasRequest;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
@@ -43,7 +44,8 @@ class AdminAreasController extends AdminController
     {
         $areas = $this->model->getAdminAll($request);
 
-        $dataTable = new DynamicAdminDataTable();
+        $dataTable = new AdminDataTable();
+        $dataTable->setPaginator($areas);
         $dataTable->setRoute($this->routes);
         $dataTable->setColumns([
             'fullname' => 'Име на област',
@@ -52,7 +54,6 @@ class AdminAreasController extends AdminController
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
         ]);
-        $dataTable->setSkipSortableIds([2]);
         $dataTable->setRows($areas, [
             'name' => function ($areas) {
                 return $areas->i18n->name;

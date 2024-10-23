@@ -34,6 +34,7 @@ class ParliamentaryGroup_i18n extends Model
         'language_id',
         'name',
         'leader_name',
-        'description'
+        'description',
+        'headquarters_address',
     ];
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
+use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
 use App\Http\Requests\Admin\AdminMunicipalitiesRequest;
@@ -44,26 +45,22 @@ class AdminMunicipalitiesController extends AdminController
     {
         $municipilities = $this->model->getAdminAll($request);
 
-        $dataTable = new DynamicAdminDataTable();
+        $dataTable = new AdminDataTable();
+        $dataTable->setPaginator($municipilities);
         $dataTable->setRoute($this->routes);
         $dataTable->setColumns([
             'fullname' => 'Име на община',
             'logo' => 'Снимка',
-            'area' => 'Област',
             'active' => 'Активна',
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
         ]);
-        $dataTable->setSkipSortableIds([2]);
         $dataTable->setRows($municipilities, [
             'name' => function ($municipilities) {
                 return $municipilities->i18n->name;
             },
             'logo' => function ($municipilities) {
                 return '<img src="' . $municipilities->getLogo() . '" class="img-thumbnail" style="max-height: 40px;">';
-            },
-            'area' => function ($municipilities) {
-                return $municipilities->area->i18n->name;
             },
             'active' => function ($municipilities) {
                 return $municipilities->active ? 'Да' : 'Не';

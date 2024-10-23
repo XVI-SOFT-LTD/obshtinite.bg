@@ -48,6 +48,7 @@ class News extends Model
         'slug',
         'logo',
         'publish_date',
+        'website',
         'top',
         'active',
         'municipality_id',
@@ -238,7 +239,7 @@ class News extends Model
 
         $builder->orderBy('id', 'desc');
 
-        return $builder->get();
+        return $builder->paginate(10);
     }
 
     public static function getForSelectAdmin(int $excludeId = 0)
@@ -259,8 +260,8 @@ class News extends Model
      *
      * @return int The ID of the related municipality.
      */
-    public function getRelatedMunicipality(): int
+    public function getRelatedMunicipality(int $newId): int
     {
-        return $this->pluck('municipality_id', 'id')->first();
+       return $this->where('id', $newId)->pluck('municipality_id', 'id')->first();
     }
 }

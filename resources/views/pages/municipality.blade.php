@@ -1,10 +1,14 @@
+@php
+    $phones = array_filter([$municipality->contact_phone_one, $municipality->contact_phone_two]);
+    $longitude = $municipality->longitude;
+    $latitude = $municipality->latitude;
+@endphp
 @include('layouts.partials._head')
 <!DOCTYPE html>
 <html lang="en">
 
 <body>
-    @include('layouts.partials._before_header')
-
+    @include('layouts.partials._header')
     <!-- header -->
     <header class="flex flex-col overflow-x-hidden ">
         <div class="grid gird-cols-1 lg:grid-cols-3">
@@ -17,12 +21,13 @@
                 <div class="swiper-button-prev"></div>
             </div>
         </div>
-        <div class="flex items-center justify-between px-5 py-3 headline">
-            <div class="flex items-center text-sm gap-1 text-stone-400">
-                <a class="text-black">Начало</a>/
-                <a class="text-black">Общини</a>/
-                <a class="text-stone-400">Община Пловид</a>
-            </div>
+        <div class="flex items-center justify-start gap-10 headline">
+            <h1 class="uppercase font-light text-black bg-white px-10 py-6 white-button-bg-gradient">
+                <a href="{{ url('/') }}" class="text-black">{{ trans('app.homepage') }}</a> /
+                <a href="{{ url('/listing/municipalities') }}" class="text-black">{{ trans('app.municipalities') }}</a>
+                /
+                {{ $municipality->i18n->name }}
+            </h1>
         </div>
     </header>
     <!-- header -->
@@ -34,105 +39,107 @@
         <div class="flex flex-col gap-5 lg:col-span-2">
             <div class="grid grid-cols-1 gap-10 lg:grid-cols-3 px-5">
                 <div class="bg-red-600 w-full">
-                    <img alt="obshtina-snimka" src="{{ asset('theme/images/sidenews-2.jpg') }}"
+                    <img alt="obshtina-snimka" src="{{ $municipality->getLogo() }}"
                         class="w-full h-full object-cover" />
 
                 </div>
                 <div class="flex flex-col gap-10 lg:col-span-2 px-5">
                     <div class="p-3 uppercase flex-center slanted-border-container shadow-xl w-full">
-                        <h1 class="text-center text-lg">Община Пловдив</h1>
+                        <h1 class="text-center text-lg">Община {{ $municipality->i18n->name }}</h1>
                     </div>
                     <div class="flex flex-col gap-3">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-phone"></i>
-                            <p>(+359) 87 6342755/ (+359) 87 6342755/</p>
+                            <p>{{ implode(' / ', $phones) }}</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-map-pin"></i>
-                            <p>Пловдив, бул. "Цар Борис 3-ти Обединител</p>
+                            <p>{!! $municipality->i18n->address !!}</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fa-regular fa-envelope"></i>
-                            <p>antique teatre@mail.mail</p>
+                            <p>{!! $municipality->contact_email !!}</p>
                         </div>
+                        @if ($municipality->website)
+                            <div class="flex items-center gap-2">
+                                <p>
+                                    <i class="fa-solid fa-globe"></i>
+                                    <a href="{{ $municipality->website }}" target="_blank"
+                                        rel="noopener noreferrer">{{ $municipality->website }}</a>
+                                </p>
+                            </div>
+                        @endif
                         <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-globe"></i>
-                            <p>www.antique teatre.bg</p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-share-nodes"></i>
+                            {{-- <i class="fa-solid fa-share-nodes"></i>
                             <i class="fa-brands fa-facebook-f"></i>
-                            <i class="fa-regular fa-envelope"></i>
+                            <i class="fa-regular fa-envelope"></i> --}}
+                            <a href="mailto:{{ $municipality->contact_email }}"><i
+                                    class="fa-solid fa-envelope"></i></a>
+                            @if ($municipality->social_media_links)
+                                @foreach ($municipality->social_media_links as $network => $url)
+                                    <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
+                                        <i class="fa-brands fa-{{ $network }}"></i>
+                                    </a>
+                                @endforeach
+                            @else
+                                <p>Няма налични социални мрежи</p>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
 
 
-            <!-- multiple pictures swiper component -->
-            <div class="swiper mySwiperTwo w-full h-[250px]">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <img src="{{ asset('theme/images/swiper.png') }}" />
+            @if ($municipality->gallery->count() > 0)
+                <!-- multiple pictures swiper component -->
+                <div class="swiper mySwiperTwo w-full h-[250px]">
+                    <div class="swiper-wrapper">
+                        @foreach ($municipality->gallery as $image)
+                            <div class="swiper-slide">
+                                <img src="{{ asset($image->getImage(445)) }}" alt="Gallery Image" />
+                            </div>
+                        @endforeach
                     </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('theme/images/swiper.png') }}" />
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('theme/images/swiper.png') }}" />
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('theme/images/swiper.png') }}" />
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('theme/images/swiper.png') }}" />
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('theme/images/swiper.png') }}" />
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('theme/images/swiper.png') }}" />
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('theme/images/swiper.png') }}" />
-                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
                 </div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
-            <!-- multiple pictures swiper component -->
+                <!-- multiple pictures swiper component -->
+            @endif
 
 
             <!-- custom navbar component -->
+
             <ul class="bg-green hidden lg:flex justify-start gap-20 items-center custom-navbar-component">
-                <li class="active">За Фирмата</li>
-                <li>Кмества</li>
-                <li>Европроекти</li>
-                <li>Запитване</li>
+                <li class="active" id="tab-party">{{ trans('app.aboutMunicipality') }}</li>
+                <li id="tab-coalitions">Кметства</li>
+                <li id="tab-europrojects">Европроекти</li>
+                <li id="tab-inquiry">Запитване</li>
             </ul>
-            <div class="flex flex-col gap-3 px-5">
-                <h1 class="font-bold">Александър Василиевич Суворов е велик руски пълководец, един от основоположниците
-                    на руското военно изкуство, княз Италийски (1799), граф Римникски (1789) и на Свещената Римска
-                    империя, генералисимус на руските сухопътни и морски</h1>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt temporibus numquam dicta doloribus
-                    totam est. Consequatur rem exercitationem vero velit, quae, voluptatibus culpa animi ipsum ipsam
-                    aspernatur amet, aut praesentium et. Vero veniam aut totam reiciendis ducimus dolore odit
-                    perspiciatis ad aliquid sunt minus, repellat debitis deleniti fugiat unde quidem!</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus nihil quis dolorem repudiandae atque
-                    consequatur, eum delectus illum quae odio numquam maxime distinctio magnam eveniet exercitationem.
-                    Officia cum quam, similique illum a sapiente iusto quidem dolores quis assumenda explicabo nisi
-                    omnis rem nam provident placeat. Beatae incidunt voluptatem expedita eaque nulla nobis. Accusamus
-                    dolorem quasi commodi at alias iure quam eligendi blanditiis doloremque illum recusandae quibusdam
-                    voluptatum sint, quisquam veniam animi repellat asperiores nesciunt ab eos sed ipsam repudiandae.
-                    Quos iusto dignissimos, qui deleniti numquam officiis obcaecati fuga! Enim illum ratione rerum
-                    maxime velit repellat voluptatum consequatur incidunt impedit optio?</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut eligendi cum provident corrupti tenetur
-                    veritatis blanditiis ea repellat eius quae!</p>
+
+            <div class="flex flex-col gap-3 px-5" id="content-party">
+                <p>{!! html_entity_decode($municipality->i18n->description) !!}</p>
+            </div>
+
+            <div class="flex flex-col gap-3 px-5 hidden" id="content-coalitions">
+                <p>Кметствата в нашата община играят ключова роля в управлението и развитието на местните общности. Те
+                    предоставят важни услуги и подкрепа на жителите, като същевременно работят за подобряване на
+                    инфраструктурата и качеството на живот.</p>
+            </div>
+
+            <div class="flex flex-col gap-3 px-5 hidden" id="content-europrojects">
+                <p>Европейските проекти са важен инструмент за финансиране и развитие на различни инициативи в нашата
+                    община. Те подпомагат реализирането на проекти в областта на инфраструктурата, образованието,
+                    културата и околната среда.</p>
+            </div>
+
+            <div class="flex flex-col gap-3 px-5 hidden" id="content-inquiry">
+                <p>Ако имате въпроси или нужда от допълнителна информация, не се колебайте да се свържете с нас. Нашият
+                    екип е на разположение да ви помогне и да отговори на вашите запитвания.</p>
             </div>
 
 
             <iframe
-                src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d5914.955480934349!2d24.745847623028343!3d42.16146152997191!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e0!3m2!1sbg!2sbg!4v1721156789591!5m2!1sbg!2sbg"
+                src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d5914.955480934349!2d{{ $longitude }}!3d{{ $latitude }}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e0!3m2!1sbg!2sbg!4v1721156789591!5m2!1sbg!2sbg"
                 width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"></iframe>
 
@@ -140,15 +147,14 @@
             <div class="flex flex-col gap-3 text-center white-bg-gradient py-3">
                 <div class="relative bg-red w-full text-center text-white px-5 lg:px-0">
                     <button
-                        class="absolute left-0 white-button-bg-gradient text-black h-[100%] px-5">Забележителности</button>
+                        class="absolute left-0 white-button-bg-gradient text-black h-[100%] px-5">{{ trans('app.landmarks') }}</button>
                     <p class="max-w-[1500px] mx-auto  py-5">Община Айтос | Община Айтос | Община Айтос | Община Айтос |
                         Община Айтос |
                     </p>
                 </div>
-                <h1 class="lg:text-lg">Природни Забележителности | Aрхитектурни забележителности | Музии</h1>
             </div>
-
         </div>
+
 
 
         <!-- left side -->
@@ -157,7 +163,7 @@
         <!-- right side -->
         <div class="flex flex-col gap-5">
             <div class="flex items-center justify-between px-5 bg-green w-full p-3 text-white uppercase text-xl">
-                <h1>Полезно</h1>
+                <h1>{{ trans('app.useful') }}</h1>
             </div>
 
             <div class="2xl:px-14 flex flex-col gap-5">

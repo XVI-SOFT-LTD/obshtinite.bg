@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Area;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Schema;
@@ -37,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
             $view->with('popularNews', News::getPopularNews());
             $view->with('categories', Category::getParentCategories());
+            $view->with('areas', Area::getActiveAreas());
         });
     }
 }

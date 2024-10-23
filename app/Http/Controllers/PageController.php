@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
+use App\Models\News;
+use App\Models\Landmark;
 use App\Models\StaticPage;
+use App\Models\Municipality;
+use App\Models\ParliamentaryGroup;
 
 class PageController extends Controller
 {
@@ -15,47 +20,25 @@ class PageController extends Controller
         $this->model = new StaticPage();
     }
 
-    /* public function contacts()
+    public function contacts()
     {
-    $this->breadcrumbs = [
-    ['url' => route('contacts'), 'name' => __('common.pages.contacts')],
-    ];
+        $page = $this->model->where('slug', 'kontakti')->first();
+        if (!$page) {
+            return redirect()->route('homepage');
+        }
 
-    $pageTitle = __('common.pages.contacts');
+        $this->breadcrumbs = [
+            ['url' => route('page.show', $page->slug), 'name' => $page->i18n->title],
+        ];
 
-    return view('pages.contact')
-    ->with('breadcrumbs', $this->breadcrumbs)
-    ->with('h1', $pageTitle)
-    ->with('pageTitle', $pageTitle)
-    ;
-    }
+        $pageTitle = $page->i18n->title;
 
-    public function about()
-    {
-
-    $this->breadcrumbs = [
-    ['url' => route('about'), 'name' => __('common.pages.about')],
-    ];
-
-    $pageTitle = __('common.pages.about');
-
-    return view('pages.about')
-    ->with('breadcrumbs', $this->breadcrumbs)
-    ->with('h1', $pageTitle)
-    ->with('pageTitle', $pageTitle)
-    ;
-    } */
-
-    public function municipality(string $id)
-    {
-
-        return view('pages.municipality');
-    }
-
-    public function area(string $id)
-    {
-
-        return view('pages.area');
+        return view('pages.contacts')
+            ->with('page', $page)
+            ->with('breadcrumbs', $this->breadcrumbs)
+            ->with('h1', $pageTitle)
+            ->with('pageTitle', $pageTitle)
+        ;
     }
 
     public function show(string $slug)
@@ -81,5 +64,40 @@ class PageController extends Controller
             ->with('h1', $pageTitle)
             ->with('pageTitle', $pageTitle)
         ;
+    }
+
+
+    public function listCategory(string $categoryName) {
+        $routeName = '';
+         switch ($categoryName) {
+            case 'landmarks':
+                $models = Landmark::paginate(12);
+                $routeName = 'landmark.show';
+                break;
+            case 'municipalities':
+                $models = Municipality::paginate(12);
+                $routeName = 'municipality.show';
+                break;
+            case 'parliamentary-groups':
+                $models = ParliamentaryGroup::paginate(12);
+                $routeName = 'parliamentaryGroup.show';
+                break;
+            case 'areas':
+                $models = Area::paginate(12);
+                $routeName = 'area.show';
+                break;
+            case 'news':
+                $models = News::paginate(12);
+                $routeName = 'news.show';
+                break;
+            default:
+                $routeName = '/';
+                abort(404, 'Category not found');
+        }
+
+        return view('pages.category_listing')
+            ->with('models', $models)
+            ->with('routeName', $routeName)
+            ->with('categoryName', $categoryName);
     }
 }

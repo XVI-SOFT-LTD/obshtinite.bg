@@ -226,8 +226,8 @@ return [
 
     'paths' => [
         'theme' => '/theme',
-        'css' => '/theme/css',
-        'js' => '/theme/js',
+        'css' => '/css',
+        'js' => '/js',
         'img' => '/theme/images',
         'build' => '/build',
     ],

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Helpers\DropDownHelper;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\Admin\AdminNewsRequest;
+use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
 
@@ -44,19 +45,18 @@ class AdminNewsController extends AdminController
     {
         $news = $this->model->getAdminAll($request);
 
-        $dataTable = new DynamicAdminDataTable();
+        $dataTable = new AdminDataTable();
+        $dataTable->setPaginator($news);
         $dataTable->setRoute($this->routes);
         $dataTable->setColumns([
             'fullname' => 'Име на новина',
             'logo' => 'Снимка',
             'Дата на публикуване',
             'authors' => 'Автори',
-            'municipality' => 'Община',
             'active' => 'Активна',
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
         ]);
-        $dataTable->setSkipSortableIds([2]);
         $dataTable->setRows($news, [
             'fullname' => function ($news) {
                 return $news->i18n->title;
@@ -69,9 +69,6 @@ class AdminNewsController extends AdminController
             },
             'authors' => function ($news) {
                 return Helper::getNewsAuthorsNamesAdmin($news);
-            },
-            'municipality' => function ($news) {
-                return $news->municipality->i18n->name;
             },
             'active' => function ($news) {
                 return $news->active ? 'Да' : 'Не';
@@ -103,7 +100,7 @@ class AdminNewsController extends AdminController
             ->with('categories', $categories)
             ->with('authors', $authors)
             ->with('relatedNews', $relatedNews)
-            ->with('municipality', $municipalities)
+            ->with('municipalities', $municipalities)
             ->with('selectedCats', [])
             ->with('selectedAuthors', [])
             ->with('selectedRelatedNews', [])
@@ -166,11 +163,12 @@ class AdminNewsController extends AdminController
         $authors = Author::getAuthorsForSelectAdmin();
         $relatedNews = News::getForSelectAdmin($id);
         $municipalities = Municipality::getMunicipalitiesForSelectAdmin();
-
+        
         $selectedCats = (new NewsCategory)->getCatsAssoc($id);
         $selectedAuthors = (new NewsAuthor)->getAuthorsAssoc($id);
         $selectedRelatedNews = (new NewsRelated)->getRelatedAssoc($id);
-        $selectedMunicipality = $this->model->getRelatedMunicipality();
+        $selectedMunicipality = $this->model->getRelatedMunicipality($id);
+        // dd($selectedMunicipality);
 
         /* breadcrumbs */
         $title = 'Редакция на ' . $this->singularPageTitle;

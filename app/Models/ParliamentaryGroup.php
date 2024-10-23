@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ParliamentaryGroup extends Model
@@ -50,7 +51,6 @@ class ParliamentaryGroup extends Model
         'logo',
         'slug',
         'founding_date',
-        'headquarters_address',
         'seats_in_parliament',
         'website',
         'founder_name',
@@ -96,6 +96,11 @@ class ParliamentaryGroup extends Model
         return AdminController::MAIN_DIR . self::DIR . '/' . intval($this->id / 1000) . '/';
     }
 
+    public function getUrl()
+    {
+        return route('parliamentaryGroup.show', ['slug' => $this->slug, 'id' => $this->id]);
+    }
+
     /**
      * Retrieves the logo of the parliamentary group.
      *
@@ -118,9 +123,9 @@ class ParliamentaryGroup extends Model
      * Retrieve all parliamentary groups with optional filtering by word.
      *
      * @param Request $request The HTTP request object.
-     * @return Collection The collection of parliamentary groups.
+     * @return object The collection of parliamentary groups.
      */
-    public function getAdminAll(Request $request): Collection
+    public function getAdminAll(Request $request): object
     {
         $word = $request->get('word');
 
@@ -134,7 +139,7 @@ class ParliamentaryGroup extends Model
 
         $builder->orderBy('id', 'desc');
 
-        return $builder->get();
+        return $builder->paginate(10);
     }
 
     /**
@@ -151,5 +156,70 @@ class ParliamentaryGroup extends Model
             ->where('id', '!=', $excludeId)
             ->orderBy('id', 'desc')
             ->get();
+    }
+
+    /**
+     * Retrieve all active parliamentary groups for the homepage with pagination.
+     *
+     * This method fetches all parliamentary groups that are marked as active and have been updated
+     * up to the current date and time. The results are ordered by the updated date and ID in descending order.
+     * It also ensures that the groups have not been soft-deleted.
+     *
+     * @param int $onPage The number of items to display per page. Default is 20.
+     * @return LengthAwarePaginator Paginated list of parliamentary groups.
+     */
+    public function getAllParliamentaryGroupHomepagePaging(int $onPage = 20)
+    {
+        return $this->where('active', 1)
+            ->where('updated_at', '<=', date('Y-m-d H:i'))
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('id', 'desc')
+            ->whereNull('deleted_at')
+            ->paginate($onPage);
+    }
+
+    /**
+     * Searches for parliamentary groups based on a given word.
+     * The search is performed in three stages:
+     * 1. Search in the 'name' field.
+     * 2. Search in the 'description' field.
+     * 3. Search in both 'name' and 'description' fields.
+     * 
+     * The search word is first converted from Latin to Cyrillic characters.
+     * The search is performed using MySQL's full-text search in BOOLEAN MODE.
+     * Results are ordered by the length of the matched field(s) in descending order.
+     * 
+     * @param string $word The search term to look for.
+     * @param int $limit The number of results to return per page. Default is 20.
+     * @return LengthAwarePaginator Paginated search results.
+     */
+    public function searchParliamentaryGroups(string $word, int $limit = 20): LengthAwarePaginator
+    {
+        $word = Helper::latinToCyrillic($word);
+
+        $word = '+' . $word . '*';
+
+        $titleOnly = $this->with(['i18n'])->where('active', 1)->whereHas('i18n', function ($query) use ($word) {
+            $query->whereRaw("MATCH(name) AGAINST(? IN BOOLEAN MODE)", [$word])
+                ->orderByRaw("LENGTH(name) DESC");
+        });
+
+        $descriptionOnly = $this->with(['i18n'])->where('active', 1)->whereHas('i18n', function ($query) use ($word) {
+            $query->whereRaw("MATCH(description) AGAINST(? IN BOOLEAN MODE)", [$word])
+                ->orderByRaw("LENGTH(description) DESC");
+        });
+
+        $titleAndDescription = $this->with(['i18n'])->where('active', 1)->whereHas('i18n', function ($query) use ($word) {
+            $query->whereRaw("MATCH(name,description) AGAINST(? IN BOOLEAN MODE)", [$word])
+                ->orderByRaw("(LENGTH(name) + LENGTH(description)) DESC");
+        });
+
+        $builder = $titleOnly
+            ->union($titleAndDescription)
+            ->union($descriptionOnly)
+        ;
+
+
+        return $builder->paginate($limit);
     }
 }

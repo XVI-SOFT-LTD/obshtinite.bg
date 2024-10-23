@@ -10,10 +10,11 @@ use App\Models\ParliamentaryGroup;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
+use App\Models\AffiliatedParliamentaryGroup;
+use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
 use App\Http\Requests\Admin\AdminParliamentaryGroupRequest;
-use App\Models\AffiliatedParliamentaryGroup;
 
 class AdminParliamentaryGroupController extends AdminController
 {
@@ -39,7 +40,8 @@ class AdminParliamentaryGroupController extends AdminController
     {
         $parliamentaryGroups = $this->model->getAdminAll($request);
         
-        $dataTable = new DynamicAdminDataTable();
+        $dataTable = new AdminDataTable();
+        $dataTable->setPaginator($parliamentaryGroups);
         $dataTable->setRoute($this->routes);
         $dataTable->setColumns([
             'name' => 'Име',
@@ -50,7 +52,6 @@ class AdminParliamentaryGroupController extends AdminController
             'updated_at' => 'Променена на',
         ]);
         
-        $dataTable->setSkipSortableIds([2]);
         $dataTable->setRows($parliamentaryGroups, [
             'name' => function ($parliamentaryGroup) {
                 return $parliamentaryGroup->i18n->name;

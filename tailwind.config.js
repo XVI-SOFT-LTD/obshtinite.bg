@@ -19,3 +19,17 @@ export default {
 
     plugins: [forms],
 };
+
+
+module.exports = {
+    content: ["./src/**/*.{html,js}"],
+    theme: {
+        extend: {
+        },
+        colors: {
+            'mainColor': "var(--mainColor)",
+            'mainColorRed': "var(--mainRedColor)"
+        }
+    },
+    plugins: [],
+}

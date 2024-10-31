@@ -1,0 +1,42 @@
+@import "./tailwind-extented.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+:root {
+  --mainColor: #607039;
+  --mainRedColor: #9D3448;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper .swiper-button-next, .swiper .swiper-button-prev{
+  background-color: rgba(0, 0, 0, 0.552);
+  padding: 30px;
+  color: white;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

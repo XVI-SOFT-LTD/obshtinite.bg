@@ -2,7 +2,6 @@
     'label' => 'Телефон за контакт',
     'id' => 'contact_phone',
     'name' => 'contact_phone',
-    'required' => true,
     'value' => old('contact_phone', $object->contact_phone ?? null),
     'hint' => 'Телефон за контакт с партията',
     'line' => true,
@@ -12,7 +11,6 @@
     'label' => 'Имейл за контакт',
     'id' => 'contact_email',
     'name' => 'contact_email',
-    'required' => true,
     'value' => old('contact_email', $object->contact_email ?? null),
     'hint' => 'Имейл за контакт с партията',
     'line' => true,
@@ -22,7 +20,6 @@
     'label' => 'Брой места в парламента',
     'id' => 'seats_in_parliament',
     'name' => 'seats_in_parliament',
-    'required' => false,
     'value' => old('seats_in_parliament', $object->seats_in_parliament ?? null),
     'hint' => 'Брой места, които партията заема в парламента',
     'line' => true,
@@ -32,7 +29,6 @@
     'label' => 'Дата на основаване',
     'id' => 'founding_date',
     'name' => 'founding_date',
-    'required' => true,
     'value' => old(
         'founding_date',
         isset($object) && $object->founding_date ? date('d.m.Y H:i', strtotime($object->founding_date)) : null),
@@ -48,7 +44,6 @@
     'value' => old('website', $object->website ?? null),
     'hint' => 'Сайт на партията',
     'line' => true,
-    'required' => false,
 ])
 
 @include('admin.developer.fields._social_media_input', [
@@ -58,7 +53,6 @@
     'value' => old('social_media_links.facebook', $object->social_media_links['facebook'] ?? ''),
     'hint' => 'Въведете URL адреса на вашата Facebook страница',
     'line' => true,
-    'required' => true,
 ])
 
 @include('admin.developer.fields._social_media_input', [
@@ -68,7 +62,6 @@
     'value' => old('social_media_links.instagram', $object->social_media_links['instagram'] ?? ''),
     'hint' => 'Въведете URL адреса на вашата Instagram страница',
     'line' => true,
-    'required' => true,
 ])
 
 @include('admin.developer.fields._image', [

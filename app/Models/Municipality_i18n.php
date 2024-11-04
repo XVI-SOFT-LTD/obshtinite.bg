@@ -19,6 +19,7 @@ class Municipality_i18n extends Model
         'name',
         'description',
         'address',
+        'mayor',
         'keywords',
     ];
 

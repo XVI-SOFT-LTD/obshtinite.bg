@@ -13,20 +13,22 @@
         <div id="custom-fields-list"></div>
         <div id="custom-fields-container">
             <div class="form-group">
-                <label class="control-label col-md-12 col-sm-12 col-xs-12">Добави бутон</label>
+                <label class="control-label">Добави бутон</label>
             </div>
             <div class="form-group">
-                <label for="new-field-name" class="control-label col-md-2 col-sm-2 col-xs-12">Име:</label>
-                <div class="col-md-4 col-sm-4 col-xs-12">
+                <label for="new-field-name" class="control-label col-md-1 col-sm-1 col-xs-1">Име:</label>
+                <div class="col-sm-2">
                     <input type="text" id="new-field-name" class="form-control" />
                 </div>
-                <div class="col-md-2 col-sm-2 col-xs-12">
-                    <label for="new-field-active" class="control-label">Активен:</label>
-                    <input type="checkbox" id="new-field-active" class="form-check-input" />
+                <div class="form-group row">
+                    <div class="control-label col-md-1 col-sm-1 col-xs-1">
+                        <label for="new-field-active">Активен:</label>
+                        <input type="checkbox" id="new-field-active" class="form-check-input" />
+                    </div>
                 </div>
-                <div class="col-md-4 col-sm-4 col-xs-12">
-                    <button type="button" id="add-field-button" class="btn btn-primary">Добави бутон</button>
-                </div>
+            </div>
+            <div class="control-label col-md-1 col-sm-1 col-xs-1">
+                <button type="button" id="add-field-button" class="btn btn-primary ">Добави бутон</button>
             </div>
         </div>
     </div>

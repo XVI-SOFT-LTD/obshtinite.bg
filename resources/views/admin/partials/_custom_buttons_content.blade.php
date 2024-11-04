@@ -18,7 +18,7 @@
             <div class="form-group">
                 <label for="new-field-name" class="control-label col-md-2 col-sm-2 col-xs-12">Име:</label>
                 <div class="col-md-4 col-sm-4 col-xs-12">
-                    <input type="text" id="new-field-name" class="form-control col-md-7 col-xs-12" />
+                    <input type="text" id="new-field-name" class="form-control" />
                 </div>
                 <div class="col-md-2 col-sm-2 col-xs-12">
                     <label for="new-field-active" class="control-label">Активен:</label>
@@ -38,11 +38,13 @@
             const addFieldButton = document.getElementById('add-field-button');
             const customFieldsList = document.getElementById('custom-fields-list');
             const newFieldNameInput = document.getElementById('new-field-name');
+            const newFieldActiveCheckbox = document.getElementById('new-field-active');
             const customTabsList = document.getElementById('custom-tabs-list');
             const customTabsContent = document.getElementById('custom-tabs-content');
 
             addFieldButton.addEventListener('click', function() {
                 const fieldName = newFieldNameInput.value.trim();
+                const fieldActive = newFieldActiveCheckbox.checked;
                 if (fieldName === '') {
                     alert('Моля, въведете име на полето.');
                     return;
@@ -53,18 +55,18 @@
 
                 // Add new field to the list
                 const fieldHtml = `
-                    <div class="tab-content">
+                    <div class="custom-field form-group row">
                         <div class="col-md-2">
-                            <label for="custom-fields[${fieldIndex}][slug]">Slug</label>
+                            <label for="custom-fields[${fieldIndex}][slug]" class="control-label">Slug</label>
                             <input type="text" name="custom-fields[${fieldIndex}][slug]" class="form-control" value="${slug}" readonly />
                         </div>
                         <div class="col-md-2">
-                            <label for="custom-fields[${fieldIndex}][name]">Име</label>
+                            <label for="custom-fields[${fieldIndex}][name]" class="control-label">Име</label>
                             <input type="text" name="custom-fields[${fieldIndex}][name]" class="form-control" value="${fieldName}" readonly />
-
                         </div>
-                             <label for="custom-fields[${fieldIndex}][active]">Активен:</label>
-                            <input type="checkbox" name="custom-fields[${fieldIndex}][active]" />
+                        <div class="col-md-2">
+                            <label for="custom-fields[${fieldIndex}][active]" class="control-label">Активен:</label>
+                            <input type="checkbox" name="custom-fields[${fieldIndex}][active]" class="form-check-input" ${fieldActive ? 'checked' : ''} />
                         </div>
                     </div>
                 `;
@@ -86,16 +88,22 @@
                     const tabContentHtml = `
                         <div role="tabpanel" class="tab-pane fade" id="tab-${slug}" aria-labelledby="tab-${slug}">
                             <div class="form-group">
-                                <label for="description-${slug}">Описание</label>
-                                <textarea id="description-${slug}" name="custom-fields[${fieldIndex}][description]" class="form-control" required></textarea>
+                                <label for="description-${slug}" class="control-label col-md-3 col-sm-3 col-xs-12">Описание</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <textarea id="description-${slug}" name="custom-fields[${fieldIndex}][description]" class="form-control" required></textarea>
+                                </div>
                             </div>
                             <div class="form-group">
-                                <label for="logo-${slug}">Главна снимка</label>
-                                <input type="file" id="logo-${slug}" name="custom-fields[${fieldIndex}][logo]" class="form-control" />
+                                <label for="logo-${slug}" class="control-label col-md-3 col-sm-3 col-xs-12">Главна снимка</label>
+                                <div class="col-md-2 col-sm-7 col-xs-12">
+                                    <input type="file" id="logo-${slug}" name="custom-fields[${fieldIndex}][logo]" class="form-control" />
+                                </div>
                             </div>
                             <div class="form-group">
-                                <label for="gallery-${slug}">Галерия от снимки</label>
-                                <input type="file" id="gallery-${slug}" name="custom-fields[${fieldIndex}][gallery][]" class="form-control" multiple />
+                                <label for="gallery-${slug}" class="control-label col-md-3 col-sm-3 col-xs-12">Галерия от снимки</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <input type="file" id="gallery-${slug}" name="custom-fields[${fieldIndex}][gallery][]" class="form-control" multiple />
+                                </div>
                             </div>
                         </div>
                     `;
@@ -105,6 +113,7 @@
                 }
 
                 newFieldNameInput.value = '';
+                newFieldActiveCheckbox.checked = false;
             });
         });
     </script>

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Helpers\Helper;
 use App\Models\Landmark;
 use App\Http\Traits\I18n;
+use App\Models\CustomButton;
 use Illuminate\Http\Request;
 use App\Models\MunicipalityGallery;
 use Illuminate\Database\Eloquent\Model;
@@ -73,6 +74,11 @@ class Municipality extends Model
     public function gallery(): HasMany
     {
         return $this->hasMany(MunicipalityGallery::class);
+    }
+
+      public function customButtons()
+    {
+        return $this->morphMany(CustomButton::class, 'buttonable');
     }
 
     /**

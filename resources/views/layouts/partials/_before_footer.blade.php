@@ -18,7 +18,7 @@
                             class="swiper-slide flex flex-col gap-3 group hover:bg-[#6d7b40] p-3 transition-all hover:shadow-lg ">
                             <img src="{{ $municipality->getLogo() }}" class="h-[200px] object-cover">
                             <div class="flex flex-col gap-2 text-start  px-2">
-                                <h1 class="font-bold group-hover:text-white">{{ $municipality->i18n->name }}</h1>
+                                <h1 class="font-bold group-hover:text-white">{{ optional($municipality->i18n)->name ?? '' }}</h1>
                                 <p class="text-sm group-hover:text-white">
                                     {{ \Illuminate\Support\Str::limit(html_entity_decode(strip_tags($municipality->i18n->description)), 50) }}
                                 </p>

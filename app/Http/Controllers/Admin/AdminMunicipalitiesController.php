@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Area;
 use App\Helpers\Helper;
+use App\Models\CustomButton;
 use App\Models\Municipality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -93,6 +94,7 @@ class AdminMunicipalitiesController extends AdminController
             ->with('breadcrumbs', $breadcrumbs)
             ->with('selectedArea', '')
             ->with('areas', $areas)
+            ->with('customButtons', [])
             ->with('pageTitle', $title);
     }
 
@@ -134,6 +136,33 @@ class AdminMunicipalitiesController extends AdminController
                     Municipality::SIZES_GALLERY
                 );
             }
+
+            // Save custom buttons
+            if (isset($request->customButtons)) {
+                foreach ($request->customButtons as $field) {
+                    $customButton = new CustomButton($field);
+                    $customButton->buttonable()->associate($municipility);
+                    $customButton->active = isset($field['active']) ? 1 : 0; // Set default value for active field
+                    $customButton->save();
+
+                    // Save logo
+                    if (isset($field['logo'])) {
+                         $logo = $this->uploadImage($field['logo'], $customButton->id, CustomButton::DIR, CustomButton::SIZES);
+                        DB::table('custom_buttons')->where('id', $customButton->id)->update(['logo' => $logo]);
+                    }
+
+                    if (isset($field['gallery'])) {
+                         $this->uploadGallery(
+                            $field['gallery'],
+                            $customButton->id,
+                            'custom_buttons_gallery',
+                            'custom_button_id',
+                            CustomButton::DIR_GALLERY,
+                            CustomButton::SIZES_GALLERY
+                        );
+                    }
+                }
+            }
         });
 
         return redirect()->route($this->routes . '.index')->with('success', 'Успешно добавена ' . $this->singularPageTitle);
@@ -151,6 +180,7 @@ class AdminMunicipalitiesController extends AdminController
         $areas = Area::getAreasForSelectAdmin();
         $selectedArea = $this->model->getRelatedArea($id);
 
+
         /* breadcrumbs */
         $title = 'Редакция на ' . $this->singularPageTitle;
         $breadcrumbs = $this->basicBreadcrumbs;
@@ -163,6 +193,7 @@ class AdminMunicipalitiesController extends AdminController
             ->with('routes', $this->routes)
             ->with('selectedArea', $selectedArea)
             ->with('areas', $areas)
+            ->with('customButtons', $municipility->customButtons)
             ->with('pageTitle', $title);
     }
 
@@ -218,6 +249,38 @@ class AdminMunicipalitiesController extends AdminController
                 );
             }
 
+            // Update custom buttons
+            if (isset($request->customButtons)) {
+                foreach ($request->customButtons as $field) {
+                    $field['active'] = isset($field['active']) ? 1 : 0; // Set default value for active field
+
+                    $customButton = CustomButton::find($field['id']) ?? new CustomButton();
+                    $customButton->fill($field);
+                    $customButton->buttonable()->associate($municipility);
+
+                    // Check if there are changes before saving
+                    if ($customButton->isDirty()) {
+                        $customButton->save();
+
+                        // Save logo
+                        if (isset($field['logo'])) {
+                            $logo = $this->uploadImage($field['logo'], $customButton->id, CustomButton::DIR, CustomButton::SIZES);
+                            DB::table('custom_buttons')->where('id', $customButton->id)->update(['logo' => $logo]);
+                        }
+
+                        if (isset($field['gallery'])) {
+                            $this->uploadGallery(
+                                $field['gallery'],
+                                $customButton->id,
+                                'custom_buttons_gallery',
+                                'custom_button_id',
+                                CustomButton::DIR_GALLERY,
+                                CustomButton::SIZES_GALLERY
+                            );
+                        }
+                    }
+                }
+            }
         });
 
         return redirect()->back()->with('success', 'Успешно редактирана ' . $this->singularPageTitle);

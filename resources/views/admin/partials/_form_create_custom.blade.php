@@ -10,6 +10,11 @@
     {{ Form::hidden('formMode', 'create') }}
 
     <div class="row">
+        <div class="col-md-12">
+            @include('admin.partials._custom_buttons_content')
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-8">
             @include('admin.partials._languages_tabs', [
                 'path' => $routes . '._form_multilanguage',

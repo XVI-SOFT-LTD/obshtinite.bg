@@ -99,6 +99,12 @@ class AdminAreasController extends AdminController
      */
     public function store(AdminAreasRequest $request)
     {
+        $request->validate([
+                'logo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
+            ],[
+                'logo.required' => 'Полето Главна снимка е задължително.',
+            ]);
+            
         $requestData = $request->all();
         $requestData['created_by'] = auth()->user()->id;
         $requestData['updated_by'] = auth()->user()->id;
@@ -161,6 +167,16 @@ class AdminAreasController extends AdminController
      */
     public function update(AdminAreasRequest $request, int $id): RedirectResponse
     {
+        $area = $this->model->findOrFail($id);
+
+        if (!$area->logo) {
+            $request->validate([
+                'logo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
+            ],[
+                'logo.required' => 'Полето Главна снимка е задължително.',
+            ]);
+        }
+
         if (!$id) {
             return redirect()->back();
         }
@@ -183,16 +199,15 @@ class AdminAreasController extends AdminController
             $requestData['logo'] = $this->uploadImage($request->file('logo'), $id, Area::DIR, Area::SIZES);
         }
 
-        DB::transaction(function () use ($requestData, $request, $id) {
-            $municipility = $this->model->findOrFail($id);
-            $municipility->update($requestData);
+        DB::transaction(function () use ($requestData, $request, $id, $area) {
+            $area->update($requestData);
 
             $this->updateI18n($id, 'area_id', $this->i18nTable, $requestData['i18n']);
 
             if ($request->hasFile('gallery')) {
                 $this->uploadGallery(
                     $request->file('gallery'),
-                    $municipility->id,
+                    $area->id,
                     'areas_gallery',
                     'area_id',
                     Area::DIR_GALLERY,

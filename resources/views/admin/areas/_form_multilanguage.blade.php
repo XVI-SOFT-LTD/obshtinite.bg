@@ -27,3 +27,23 @@
     'line' => true,
     'editor' => true,
 ])
+
+@include('admin.developer.fields._input', [
+    'label' => 'Областен център [' . $language->code . ']',
+    'id' => 'i18n[' . $language->id . '][regional_center]',
+    'name' => 'i18n[' . $language->id . '][regional_center]',
+    'value' => old('i18n.' . $language->id . '.regional_center', $i18n ? $i18n[$language->id]->regional_center : ''),
+    'hint' => 'Въведете името на областния център',
+    'line' => true,
+    'required' => false,
+])
+
+@include('admin.developer.fields._input', [
+    'label' => 'Адрес [' . $language->code . ']',
+    'id' => 'i18n[' . $language->id . '][address]',
+    'name' => 'i18n[' . $language->id . '][address]',
+    'required' => true,
+    'value' => old('i18n.' . $language->id . '.address', $i18n ? $i18n[$language->id]->address : ''),
+    'hint' => 'Адрес на Областния център',
+    'line' => true,
+])

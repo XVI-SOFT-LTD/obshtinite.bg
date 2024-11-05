@@ -29,6 +29,15 @@
 ])
 
 @include('admin.developer.fields._input', [
+    'label' => 'Кмет [' . $language->code . ']',
+    'id' => 'i18n[' . $language->id . '][mayor]',
+    'name' => 'i18n[' . $language->id . '][mayor]',
+    'value' => old('i18n.' . $language->id . '.mayor', $i18n ? $i18n[$language->id]->mayor : ''),
+    'hint' => 'Име на кмета на общината',
+    'line' => true,
+])
+
+@include('admin.developer.fields._input', [
     'label' => 'Адрес [' . $language->code . ']',
     'id' => 'i18n[' . $language->id . '][address]',
     'name' => 'i18n[' . $language->id . '][address]',

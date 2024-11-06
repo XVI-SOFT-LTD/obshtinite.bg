@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\Helper;
 use App\Http\Traits\I18n;
+use App\Models\CustomButton;
 use App\Models\Municipality;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -76,6 +78,18 @@ class Landmark extends Model
     public function getDir(): string
     {
         return AdminController::MAIN_DIR . self::DIR . '/' . intval($this->id / 1000) . '/';
+    }
+
+    /**
+     * Get all of the custom buttons for the municipality.
+     *
+     * This function defines a polymorphic one-to-many relationship.
+     *
+     * @return MorphMany
+     */
+    public function customButtons(): MorphMany
+    {
+        return $this->morphMany(CustomButton::class, 'buttonable');
     }
 
     /**

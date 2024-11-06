@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
 use App\Http\Requests\Admin\AdminMunicipalitiesRequest;
+use App\Models\CustomButtonGallery;
 
 class AdminMunicipalitiesController extends AdminController
 {
@@ -249,17 +250,40 @@ class AdminMunicipalitiesController extends AdminController
                 );
             }
 
+            // Ensure customButtons key is present
+            if (!isset($requestData['customButtons'])) {
+                $requestData['customButtons'] = [];
+            }
+
+            // Ensure each custom button has name and slug keys
+            foreach ($requestData['customButtons'] as $key => &$button) {
+                if (!isset($button['name']) || !isset($button['slug'])) {
+                    unset($requestData['customButtons'][$key]);
+                }
+            }
+
             // Update custom buttons
-            if (isset($request->customButtons)) {
-                foreach ($request->customButtons as $field) {
+            if (isset($requestData['customButtons'])) {
+                $existingButtonIds = array_filter(array_column($requestData['customButtons'], 'id'));
+                $buttonsToDelete = CustomButton::where('buttonable_id', $id)
+                    ->whereNotIn('id', $existingButtonIds)
+                    ->get();
+
+                foreach ($buttonsToDelete as $button) {
+                    // Delete associated gallery images
+                    CustomButtonGallery::where('custom_button_id', $button->id)->delete();
+                    $button->delete();
+                }
+
+                foreach ($requestData['customButtons'] as $field) {
                     $field['active'] = isset($field['active']) ? 1 : 0; // Set default value for active field
 
-                    $customButton = CustomButton::find($field['id']) ?? new CustomButton();
+                    $customButton = isset($field['id']) ? CustomButton::find($field['id']) : new CustomButton();
                     $customButton->fill($field);
                     $customButton->buttonable()->associate($municipility);
 
                     // Check if there are changes before saving
-                    if ($customButton->isDirty()) {
+                    if ($customButton->isDirty() || isset($field['gallery'])) {
                         $customButton->save();
 
                         // Save logo
@@ -278,6 +302,14 @@ class AdminMunicipalitiesController extends AdminController
                                 CustomButton::SIZES_GALLERY
                             );
                         }
+                    }
+
+                    if ($request->has('delete_gallery_images') && $request->get('delete_gallery_images')) {
+                        $deleteGalleryImages = explode(',', $request->get('delete_gallery_images'));
+                        CustomButtonGallery::where(
+                            'custom_button_id',
+                            $customButton->id
+                        )->whereIn('id', $deleteGalleryImages)->delete();
                     }
                 }
             }

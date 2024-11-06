@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -76,7 +77,14 @@ class Municipality extends Model
         return $this->hasMany(MunicipalityGallery::class);
     }
 
-      public function customButtons()
+    /**
+     * Get all of the custom buttons for the municipality.
+     *
+     * This function defines a polymorphic one-to-many relationship.
+     *
+     * @return MorphMany
+     */
+    public function customButtons(): MorphMany
     {
         return $this->morphMany(CustomButton::class, 'buttonable');
     }

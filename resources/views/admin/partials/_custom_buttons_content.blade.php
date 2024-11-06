@@ -1,3 +1,5 @@
+<input type="hidden" name="delete_gallery_images" id="delete-gallery-images" value="">
+<input type="hidden" name="delete_buttons" id="delete-buttons" value="">
 <div class="tabs" role="tabpanel" data-example-id="togglable-tabs">
     <ul class="nav nav-tabs bar_tabs" role="tablist" id="custom-tabs-list">
         <li role="tab-custom" class="nav-item">
@@ -46,9 +48,17 @@
                             <input type="checkbox" name="customButtons[{{ $loop->index }}][active]"
                                 class="form-check-input" {{ $button->active ? 'checked' : '' }} />
                         </div>
-                        <div class="col-md-1">
-                            <button type="button" class="btn btn-primary edit-button"
-                                data-index="{{ $loop->index }}">Редактирай</button>
+                        <div>
+                            <button type="button" class="btn btn-primary btn-sm edit-button"
+                                data-index="{{ $loop->index }}">
+                                <i class="fa fa-pencil"></i>
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-danger btn-sm remove-button"
+                                data-index="{{ $loop->index }}">
+                                <i class="fa fa-times"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -69,6 +79,7 @@
             <div class="row">
                 <div class="col-md-2">
                     <input type="text" id="new-field-name" class="form-control" />
+                    <div id="name-error" class="text-danger" style="display: none;">Моля, въведете име</div>
                 </div>
                 <div class="col-md-1">
                     <input type="checkbox" id="new-field-active" class="form-check-input" />
@@ -110,8 +121,14 @@
                         name="customButtons[{{ $loop->index }}][gallery][]" class="form-control" multiple />
                     @if ($button->gallery)
                         @foreach ($button->gallery as $image)
-                            <img src="{{ asset($image->getImage()) }}" alt="{{ $button->name }}"
-                                class="img-thumbnail" style="max-height: 100px;">
+                            <div class="gallery-image-wrapper"
+                                style="position: relative; display: inline-block; margin: 5px;">
+                                <img src="{{ asset($image->getImage()) }}" alt="{{ $button->name }}"
+                                    class="img-thumbnail" style="max-height: 100px;">
+                                <button type="button" class="btn btn-danger btn-sm remove-gallery-image"
+                                    data-image-id="{{ $image->id }}"
+                                    style="position: absolute; top: 0; right: 0; padding: 2px 5px;">&times;</button>
+                            </div>
                         @endforeach
                     @endif
                 </div>
@@ -125,6 +142,10 @@
         display: flex;
         align-items: center;
         margin-block: 10px;
+    }
+
+    .is-invalid {
+        border-color: red;
     }
 </style>
 
@@ -141,9 +162,15 @@
             addFieldButton.addEventListener('click', function() {
                 const fieldName = newFieldNameInput.value.trim();
                 const fieldActive = newFieldActiveCheckbox.checked;
+                const nameError = document.getElementById('name-error');
+
                 if (fieldName === '') {
-                    alert('Моля, въведете име на полето.');
+                    newFieldNameInput.classList.add('is-invalid');
+                    nameError.style.display = 'block';
                     return;
+                } else {
+                    newFieldNameInput.classList.remove('is-invalid');
+                    nameError.style.display = 'none';
                 }
 
                 const editIndex = addFieldButton.getAttribute('data-edit-index');
@@ -210,8 +237,15 @@
                                 <div class="col-md-1">
                                     <input type="checkbox" name="customButtons[${fieldIndex}][active]" class="form-check-input" ${fieldActive ? 'checked' : 'unchecked'} />
                                 </div>
-                                <div class="col-md-1">
-                                    <button type="button" class="btn btn-primary edit-button" data-index="${fieldIndex}">Редактирай</button>
+                                <div>
+                                    <button type="button" class="btn btn-primary btn-sm edit-button" data-index="${fieldIndex}">
+                                        <i class="fa fa-pencil"></i>
+                                    </button>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-danger btn-sm remove-button" data-index="${fieldIndex}">
+                                        <i class="fa fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -262,8 +296,11 @@
             });
 
             document.addEventListener('click', function(event) {
-                if (event.target.classList.contains('edit-button')) {
-                    const index = event.target.getAttribute('data-index');
+                const target = event.target.closest('button');
+                if (!target) return;
+
+                if (target.classList.contains('edit-button')) {
+                    const index = target.getAttribute('data-index');
                     const field = customFieldsList.querySelector(`.custom-field[data-index="${index}"]`);
                     const fieldNameInput = field.querySelector(
                         `input[name="customButtons[${index}][name]"]`);
@@ -275,6 +312,71 @@
 
                     addFieldButton.textContent = 'Запази промените';
                     addFieldButton.setAttribute('data-edit-index', index);
+                }
+                if (target.classList.contains('remove-button')) {
+                    const index = target.getAttribute('data-index');
+                    const field = customFieldsList.querySelector(`.custom-field[data-index="${index}"]`);
+                    const buttonIdInput = field.querySelector(`input[name="customButtons[${index}][id]"]`);
+                    const deleteButtonsInput = document.getElementById('delete-buttons');
+
+                    if (buttonIdInput) {
+                        const buttonId = buttonIdInput.value;
+                        if (deleteButtonsInput.value) {
+                            deleteButtonsInput.value += `,${buttonId}`;
+                        } else {
+                            deleteButtonsInput.value = buttonId;
+                        }
+                    }
+
+                    // Remove field
+                    field.remove();
+
+                    // Remove tab
+                    const slug = field.querySelector(`input[name="customButtons[${index}][slug]"]`).value;
+                    const tab = customTabsList.querySelector(`li[role="tab-${slug}"]`);
+                    if (tab) {
+                        tab.remove();
+                    }
+
+                    // Remove tab content
+                    const tabContent = customTabsContent.querySelector(`#tab-${slug}`);
+                    if (tabContent) {
+                        tabContent.remove();
+                    }
+
+                    // Update data-index attributes
+                    const fields = customFieldsList.querySelectorAll('.custom-field');
+                    fields.forEach((field, idx) => {
+                        field.setAttribute('data-index', idx);
+                        field.querySelectorAll('input, button').forEach(input => {
+                            const name = input.getAttribute('name');
+                            if (name) {
+                                input.setAttribute('name', name.replace(/\[\d+\]/, `[${idx}]`));
+                            }
+                            const dataIndex = input.getAttribute('data-index');
+                            if (dataIndex !== null) {
+                                input.setAttribute('data-index', idx);
+                            }
+                        });
+                    });
+                }
+
+                if (target.classList.contains('remove-gallery-image')) {
+                    const imageId = target.getAttribute('data-image-id');
+                    const imageWrapper = target.closest('.gallery-image-wrapper');
+                    const deleteGalleryImagesInput = document.getElementById('delete-gallery-images');
+
+                    if (deleteGalleryImagesInput) {
+                        deleteGalleryImagesInput.value += `,${imageId}`;
+                    } else {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'delete_gallery_images';
+                        input.value = imageId;
+                        document.querySelector('form').appendChild(input);
+                    }
+
+                    imageWrapper.remove();
                 }
             });
         });

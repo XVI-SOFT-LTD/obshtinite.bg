@@ -44,6 +44,8 @@ class Area extends Model
         'slug',
         'website',
         'social_media_links',
+        'contact_phone',
+        'contact_email',
         'active',
         'population',
         'area',

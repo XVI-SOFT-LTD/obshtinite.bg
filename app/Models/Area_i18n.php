@@ -19,6 +19,8 @@ class Area_i18n extends Model
         'language_id',
         'name',
         'description',
+        'address',
+        'regional_center',
     ];
 
     /**

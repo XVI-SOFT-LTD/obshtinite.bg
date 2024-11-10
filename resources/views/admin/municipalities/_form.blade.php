@@ -35,7 +35,6 @@
     'value' => old('website', $object->website ?? null),
     'hint' => 'Сайт на общината',
     'line' => true,
-    'required' => false,
 ])
 
 @include('admin.developer.fields._social_media_input', [
@@ -45,17 +44,6 @@
     'value' => old('social_media_links.facebook', $object->social_media_links['facebook'] ?? ''),
     'hint' => 'Въведете URL адреса на вашата Facebook страница',
     'line' => true,
-    'required' => false,
-])
-
-@include('admin.developer.fields._social_media_input', [
-    'label' => 'Google',
-    'id' => 'social_media_google',
-    'name' => 'social_media_links[google]',
-    'value' => old('social_media_links.google', $object->social_media_links['google'] ?? ''),
-    'hint' => 'Въведете URL адреса на вашата Google страница',
-    'line' => true,
-    'required' => false,
 ])
 
 @include('admin.developer.fields._input', [
@@ -116,7 +104,6 @@
     'label' => 'Работно време',
     'id' => 'working_hours',
     'name' => 'working_hours',
-    'required' => true,
     'value' => old('working_hours', $object->working_hours ?? null),
     'line' => true,
 ])

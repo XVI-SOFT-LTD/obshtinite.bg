@@ -18,14 +18,24 @@
     'required' => false,
 ])
 
-@include('admin.developer.fields._social_media_input', [
-    'label' => 'Google',
-    'id' => 'social_media_google',
-    'name' => 'social_media_links[google]',
-    'value' => old('social_media_links.google', $object->social_media_links['google'] ?? ''),
-    'hint' => 'Въведете URL адреса на вашата Google страница',
-    'line' => true,
+@include('admin.developer.fields._input', [
+    'label' => 'Телефон за контакт',
+    'id' => 'contact_phone',
+    'name' => 'contact_phone',
     'required' => false,
+    'value' => old('contact_phone', $object->contact_phone ?? null),
+    'hint' => 'Телефон за контакт с областния център',
+    'line' => true,
+])
+
+@include('admin.developer.fields._input', [
+    'label' => 'Имейл за контакт',
+    'id' => 'contact_email',
+    'name' => 'contact_email',
+    'required' => false,
+    'value' => old('contact_email', $object->contact_email ?? null),
+    'hint' => 'Имейл за контакт с областния център',
+    'line' => true,
 ])
 
 @include('admin.developer.fields._number_input', [
@@ -52,7 +62,6 @@
     'label' => 'Главна снимка',
     'id' => 'logo',
     'name' => 'logo',
-    'required' => false,
     'value' => old('logo', $object->logo ?? null),
     'line' => true,
     'hint' => 'Главна снимка на общината',
@@ -74,7 +83,6 @@
     'required' => false,
     'value' => old('active', $object->active ?? null),
     'checked' => old('active', $object->active ?? null) == '1' ? true : false,
-    'line' => true,
     'hint' => 'Активирайте общината, за да бъде видима в сайта и за търсене',
 ])
 

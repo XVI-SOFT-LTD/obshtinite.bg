@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Helpers\Helper;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Traits\I18n;
+use App\Models\CustomButton;
 use App\Models\Landmark;
 use App\Models\MunicipalityGallery;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
@@ -73,6 +75,18 @@ class Municipality extends Model
     public function gallery(): HasMany
     {
         return $this->hasMany(MunicipalityGallery::class);
+    }
+
+    /**
+     * Get all of the custom buttons for the municipality.
+     *
+     * This function defines a polymorphic one-to-many relationship.
+     *
+     * @return MorphMany
+     */
+    public function customButtons(): MorphMany
+    {
+        return $this->morphMany(CustomButton::class, 'buttonable');
     }
 
     /**

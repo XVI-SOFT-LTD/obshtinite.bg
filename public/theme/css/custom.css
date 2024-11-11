@@ -1,0 +1,107 @@
+.grid-2 {
+    @apply grid grid-cols-1 lg:grid-cols-2;
+}
+
+.grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
+}
+
+.grid-4 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4;
+}
+
+.flex-center {
+    @apply flex justify-center items-center;
+}
+
+.flex-between {
+    @apply flex justify-between items-center;
+}
+
+.flex-start {
+    @apply flex justify-start items-center;
+}
+
+.r-flex-1 {
+    @apply flex flex-col lg:flex-row items-center gap-1;
+}
+
+.r-flex-2 {
+    @apply flex flex-col lg:flex-row items-center gap-2;
+}
+
+.r-flex-3 {
+    @apply flex flex-col lg:flex-row items-center gap-3;
+}
+
+.r-flex-4 {
+    @apply flex flex-col lg:flex-row items-center gap-4;
+}
+
+.r-flex-5 {
+    @apply flex flex-col lg:flex-row items-center gap-5;
+}
+
+.flex-1 {
+    @apply flex items-center gap-1;
+}
+
+.flex-2 {
+    @apply flex items-center gap-2;
+}
+
+.flex-3 {
+    @apply flex items-center gap-3;
+}
+
+.flex-4 {
+    @apply flex items-center gap-4;
+}
+
+.flex-5 {
+    @apply flex items-center gap-5;
+}
+
+.flex-col-1 {
+    @apply flex flex-col gap-1;
+}
+
+.flex-col-2 {
+    @apply flex flex-col gap-2;
+}
+
+.flex-col-3 {
+    @apply flex flex-col gap-3;
+}
+
+.flex-col-4 {
+    @apply flex flex-col gap-4;
+}
+
+.flex-col-5 {
+    @apply flex flex-col gap-5;
+}
+
+.flex-col-10 {
+    @apply flex flex-col gap-10;
+}
+
+.flex-col-20 {
+    @apply flex flex-col gap-20;
+}
+
+.flex-col-56 {
+    @apply flex flex-col gap-56;
+}
+
+.max-w-wrapper {
+    @apply max-w-7xl mx-auto relative;
+}
+
+.max-w-wrapper-lg {
+    @apply max-w-[105rem] mx-auto px-5 relative;
+}
+
+.input {
+    @apply h-[45px] focus:ring-1 ring-neutral-200 dark:ring-neutral-800 bg-neutral-100 dark:bg-neutral-900 outline-none p-2 text-stone-400 text-sm placeholder:text-stone-400 placeholder:text-sm rounded-md box-border;
+}

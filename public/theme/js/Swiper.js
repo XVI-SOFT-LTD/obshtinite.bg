@@ -15,8 +15,8 @@ var swiper = new Swiper(".swiperTwo", {
 var swiper = new Swiper(".firstLongSwiper", {
     pagination: {
         el: ".swiper-pagination",
-      },
-      breakpoints: {
+    },
+    breakpoints: {
         320: {
             slidesPerView: 2,
             spaceBetween: 0,
@@ -43,8 +43,8 @@ var swiper = new Swiper(".firstLongSwiper", {
 var swiper = new Swiper(".secondLongSwiper", {
     pagination: {
         el: ".swiper-pagination",
-      },
-      breakpoints: {
+    },
+    breakpoints: {
         320: {
             slidesPerView: 2,
             spaceBetween: 0,
@@ -72,8 +72,8 @@ var swiper = new Swiper(".secondLongSwiper", {
 var swiper = new Swiper(".thirdLongSwiper", {
     pagination: {
         el: ".swiper-pagination",
-      },
-      breakpoints: {
+    },
+    breakpoints: {
         320: {
             slidesPerView: 2,
             spaceBetween: 0,

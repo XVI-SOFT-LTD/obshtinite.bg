@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\News;
-use App\Models\User;
 use App\Models\Landmark;
 use App\Models\Municipality;
+use App\Models\News;
 use App\Models\ParliamentaryGroup;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class HomeController extends Controller
@@ -27,60 +25,17 @@ class HomeController extends Controller
 
     public function homepage()
     {
-        $topNews = $this->newsModel->getTopNewsHomepage(3);
-
-        $excludedIds = [];
-        if ($topNews->count() > 0) {
-            $excludedIds = $topNews->pluck('id')->toArray();
-        }
-
-        $news = $this->newsModel->getAllNewsHomepagePaging($excludedIds, 10);
-        $parliamentaryGroups = $this->parliamentaryGroupModel->getAllParliamentaryGroupHomepagePaging();
+        $news = $this->newsModel->getHomepageNews(9);
         $municipalities = $this->municipalitiesModel->getAllMunicipalitiesHomepagePaging();
-        $landmarks = $this->landmarkModel->getAllLandmarksHomepagePaging();
+
+        $parties = $this->parliamentaryGroupModel->getAllParliamentaryGroupHomepagePaging();
+        #$landmarks = $this->landmarkModel->getAllLandmarksHomepagePaging();
 
         return view('homepage.homepage')
-            ->with('topNews', $topNews)
             ->with('news', $news)
-            ->with('parliamentaryGroups', $parliamentaryGroups)
             ->with('municipalities', $municipalities)
-            ->with('landmarks', $landmarks)
-            ->with('homepage', true)
+            ->with('parties', $parties)
+            #->with('landmarks', $landmarks)
         ;
-    }
-
-    public function category()
-    {
-        return view('frontend.category');
-    }
-
-    public function video()
-    {
-        return view('frontend.single-video');
-    }
-
-    public function audio()
-    {
-        return view('frontend.single-audio');
-    }
-
-    public function gallery()
-    {
-        return view('frontend.single-gallery');
-    }
-
-    public function standard()
-    {
-        return view('frontend.single-standard');
-    }
-
-    public function about()
-    {
-        return view('frontend.about');
-    }
-
-    public function contact()
-    {
-        return view('frontend.contact');
     }
 }

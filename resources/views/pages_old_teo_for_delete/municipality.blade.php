@@ -39,8 +39,7 @@
         <div class="flex flex-col gap-5 lg:col-span-2">
             <div class="grid grid-cols-1 gap-10 lg:grid-cols-3 px-5">
                 <div class="bg-red-600 w-full">
-                    <img alt="obshtina-snimka" src="{{ $municipality->getLogo() }}"
-                        class="w-full h-full object-cover" />
+                    <img alt="obshtina-snimka" src="{{ $municipality->getLogo() }}" class="w-full h-full object-cover" />
 
                 </div>
                 <div class="flex flex-col gap-10 lg:col-span-2 px-5">
@@ -64,8 +63,7 @@
                             <div class="flex items-center gap-2">
                                 <p>
                                     <i class="fa-solid fa-globe"></i>
-                                    <a href="{{ $municipality->website }}" target="_blank"
-                                        rel="noopener noreferrer">{{ $municipality->website }}</a>
+                                    <a href="{{ $municipality->website }}" target="_blank" rel="noopener noreferrer">{{ $municipality->website }}</a>
                                 </p>
                             </div>
                         @endif
@@ -73,8 +71,7 @@
                             {{-- <i class="fa-solid fa-share-nodes"></i>
                             <i class="fa-brands fa-facebook-f"></i>
                             <i class="fa-regular fa-envelope"></i> --}}
-                            <a href="mailto:{{ $municipality->contact_email }}"><i
-                                    class="fa-solid fa-envelope"></i></a>
+                            <a href="mailto:{{ $municipality->contact_email }}"><i class="fa-solid fa-envelope"></i></a>
                             @if ($municipality->social_media_links)
                                 @foreach ($municipality->social_media_links as $network => $url)
                                     <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
@@ -138,16 +135,13 @@
             </div>
 
 
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d5914.955480934349!2d{{ $longitude }}!3d{{ $latitude }}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e0!3m2!1sbg!2sbg!4v1721156789591!5m2!1sbg!2sbg"
-                width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d5914.955480934349!2d{{ $longitude }}!3d{{ $latitude }}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e0!3m2!1sbg!2sbg!4v1721156789591!5m2!1sbg!2sbg"
+                width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 
 
             <div class="flex flex-col gap-3 text-center white-bg-gradient py-3">
                 <div class="relative bg-red w-full text-center text-white px-5 lg:px-0">
-                    <button
-                        class="absolute left-0 white-button-bg-gradient text-black h-[100%] px-5">{{ trans('app.landmarks') }}</button>
+                    <button class="absolute left-0 white-button-bg-gradient text-black h-[100%] px-5">{{ trans('app.landmarks') }}</button>
                     <p class="max-w-[1500px] mx-auto  py-5">Община Айтос | Община Айтос | Община Айтос | Община Айтос |
                         Община Айтос |
                     </p>

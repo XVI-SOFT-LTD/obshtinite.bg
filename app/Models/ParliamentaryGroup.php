@@ -3,17 +3,17 @@
 namespace App\Models;
 
 use App\Helpers\Helper;
-use App\Http\Traits\I18n;
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\ParliamentaryGroupGallery;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Controllers\Admin\AdminController;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Http\Traits\I18n;
+use App\Models\ParliamentaryGroupGallery;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
 
 class ParliamentaryGroup extends Model
 {
@@ -59,7 +59,7 @@ class ParliamentaryGroup extends Model
         'social_media_links',
         'active',
         'created_by',
-        'updated_by'
+        'updated_by',
     ];
 
     protected $casts = [
@@ -171,8 +171,6 @@ class ParliamentaryGroup extends Model
     public function getAllParliamentaryGroupHomepagePaging(int $onPage = 20)
     {
         return $this->where('active', 1)
-            ->where('updated_at', '<=', date('Y-m-d H:i'))
-            ->orderBy('updated_at', 'desc')
             ->orderBy('id', 'desc')
             ->whereNull('deleted_at')
             ->paginate($onPage);
@@ -184,11 +182,11 @@ class ParliamentaryGroup extends Model
      * 1. Search in the 'name' field.
      * 2. Search in the 'description' field.
      * 3. Search in both 'name' and 'description' fields.
-     * 
+     *
      * The search word is first converted from Latin to Cyrillic characters.
      * The search is performed using MySQL's full-text search in BOOLEAN MODE.
      * Results are ordered by the length of the matched field(s) in descending order.
-     * 
+     *
      * @param string $word The search term to look for.
      * @param int $limit The number of results to return per page. Default is 20.
      * @return LengthAwarePaginator Paginated search results.
@@ -218,7 +216,6 @@ class ParliamentaryGroup extends Model
             ->union($titleAndDescription)
             ->union($descriptionOnly)
         ;
-
 
         return $builder->paginate($limit);
     }

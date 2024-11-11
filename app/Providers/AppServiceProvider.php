@@ -3,13 +3,12 @@
 namespace App\Providers;
 
 use App\Models\Area;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Pagination\Paginator;
-use App\Models\News;
-use App\Models\Menu;
 use App\Models\Category;
+use App\Models\Menu;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,7 +35,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         View::composer('*', function ($view) {
-            $view->with('popularNews', News::getPopularNews());
             $view->with('categories', Category::getParentCategories());
             $view->with('areas', Area::getActiveAreas());
         });

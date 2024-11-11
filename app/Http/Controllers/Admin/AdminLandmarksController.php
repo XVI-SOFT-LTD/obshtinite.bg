@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Requests\Admin\AdminLandmarksRequest;
 use App\Http\Controllers\Admin\DynamicAdminDataTable;
+use App\Models\CustomButtonGallery;
+use App\Models\CustomButton;
+
 
 class AdminLandmarksController extends AdminController
 {
@@ -97,6 +100,7 @@ class AdminLandmarksController extends AdminController
             ->with('breadcrumbs', $breadcrumbs)
             ->with('selectedMunicipalities', '')
             ->with('municipalities', $municipalities)
+            ->with('customButtons', [])
             ->with('pageTitle', $title);
     }
 
@@ -134,6 +138,33 @@ class AdminLandmarksController extends AdminController
                     Landmark::SIZES_GALLERY
                 );
             }
+
+            // Save custom buttons
+            if (isset($request->customButtons)) {
+                foreach ($request->customButtons as $field) {
+                    $customButton = new CustomButton($field);
+                    $customButton->buttonable()->associate($landmark);
+                    $customButton->active = isset($field['active']) ? 1 : 0; // Set default value for active field
+                    $customButton->save();
+
+                    // Save logo
+                    if (isset($field['logo'])) {
+                         $logo = $this->uploadImage($field['logo'], $customButton->id, CustomButton::DIR, CustomButton::SIZES);
+                        DB::table('custom_buttons')->where('id', $customButton->id)->update(['logo' => $logo]);
+                    }
+
+                    if (isset($field['gallery'])) {
+                         $this->uploadGallery(
+                            $field['gallery'],
+                            $customButton->id,
+                            'custom_buttons_gallery',
+                            'custom_button_id',
+                            CustomButton::DIR_GALLERY,
+                            CustomButton::SIZES_GALLERY
+                        );
+                    }
+                }
+            }
         });
 
         return redirect()->route($this->routes . '.index')->with('success', 'Успешно добавена ' . $this->singularPageTitle);
@@ -163,6 +194,7 @@ class AdminLandmarksController extends AdminController
             ->with('routes', $this->routes)
             ->with('selectedMunicipalities', $selectedMunicipality)
             ->with('municipalities', $municipalities)
+            ->with('customButtons', $landmark->customButtons)
             ->with('pageTitle', $title);
     }
 
@@ -213,6 +245,71 @@ class AdminLandmarksController extends AdminController
                     Landmark::DIR_GALLERY,
                     Landmark::SIZES_GALLERY
                 );
+            }
+
+            // Ensure customButtons key is present
+            if (!isset($requestData['customButtons'])) {
+                $requestData['customButtons'] = [];
+            }
+
+            // Ensure each custom button has name and slug keys
+            foreach ($requestData['customButtons'] as $key => &$button) {
+                if (!isset($button['name']) || !isset($button['slug'])) {
+                    unset($requestData['customButtons'][$key]);
+                }
+            }
+
+
+            // Update custom buttons
+            if (isset($requestData['customButtons'])) {
+                $existingButtonIds = array_filter(array_column($requestData['customButtons'], 'id'));
+                $buttonsToDelete = CustomButton::where('buttonable_id', $id)
+                    ->whereNotIn('id', $existingButtonIds)
+                    ->get();
+
+                foreach ($buttonsToDelete as $button) {
+                    // Delete associated gallery images
+                    CustomButtonGallery::where('custom_button_id', $button->id)->delete();
+                    $button->delete();
+                }
+
+                foreach ($requestData['customButtons'] as $field) {
+                    $field['active'] = isset($field['active']) ? 1 : 0; // Set default value for active field
+
+                    $customButton = isset($field['id']) ? CustomButton::find($field['id']) : new CustomButton();
+                    $customButton->fill($field);
+                    $customButton->buttonable()->associate($landmark);
+
+                    // Check if there are changes before saving
+                    if ($customButton->isDirty() || isset($field['gallery'])) {
+                        $customButton->save();
+
+                        // Save logo
+                        if (isset($field['logo'])) {
+                            $logo = $this->uploadImage($field['logo'], $customButton->id, CustomButton::DIR, CustomButton::SIZES);
+                            DB::table('custom_buttons')->where('id', $customButton->id)->update(['logo' => $logo]);
+                        }
+
+                        if (isset($field['gallery'])) {
+                            $this->uploadGallery(
+                                $field['gallery'],
+                                $customButton->id,
+                                'custom_buttons_gallery',
+                                'custom_button_id',
+                                CustomButton::DIR_GALLERY,
+                                CustomButton::SIZES_GALLERY
+                            );
+                        }
+                    }
+
+                    if ($request->has('delete_gallery_images') && $request->get('delete_gallery_images')) {
+                        $deleteGalleryImages = explode(',', $request->get('delete_gallery_images'));
+                        CustomButtonGallery::where(
+                            'custom_button_id',
+                            $customButton->id
+                        )->whereIn('id', $deleteGalleryImages)->delete();
+                    }
+                }
             }
 
         });

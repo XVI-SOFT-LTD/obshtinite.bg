@@ -3,17 +3,17 @@
 namespace App\Models;
 
 use App\Helpers\Helper;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Traits\I18n;
 use App\Models\AreaGallery;
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Http\Controllers\Admin\AdminController;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
 
 class Area extends Model
 {
@@ -57,7 +57,7 @@ class Area extends Model
         'social_media_links' => 'array',
     ];
 
-     /**
+    /**
      * Get the gallery for the municipality.
      *
      * @return HasMany
@@ -169,7 +169,6 @@ class Area extends Model
         return $this->hasMany(Participation::class);
     }
 
-    
     /**
      * Get all landmarks from municipalities attached to the area.
      *
@@ -189,7 +188,7 @@ class Area extends Model
     {
         return $this->hasManyThrough(News::class, Municipality::class);
     }
-    
+
     /**
      * Retrieve all active areas.
      *
@@ -203,15 +202,15 @@ class Area extends Model
             ->get();
     }
 
-     public function getAllLandmarks(): Collection
+    public function getAllLandmarks(): Collection
     {
         $landmarks = $this->municipality()
-        ->with('landmarks')
-        ->get()
-        ->pluck('landmarks')
-        ->flatten();
+            ->with('landmarks')
+            ->get()
+            ->pluck('landmarks')
+            ->flatten();
 
-    return new Collection($landmarks);
+        return new Collection($landmarks);
     }
 
     /**
@@ -220,11 +219,11 @@ class Area extends Model
      * 1. Search in the 'name' field.
      * 2. Search in the 'description' field.
      * 3. Search in both 'name' and 'description' fields.
-     * 
+     *
      * The search word is first converted from Latin to Cyrillic characters.
      * The search is performed using MySQL's full-text search in BOOLEAN MODE.
      * Results are ordered by the length of the matched field(s) in descending order.
-     * 
+     *
      * @param string $word The search term to look for.
      * @param int $limit The number of results to return per page. Default is 20.
      * @return LengthAwarePaginator Paginated search results.
@@ -251,10 +250,9 @@ class Area extends Model
         // });
 
         $builder = $titleOnly
-            // ->union($titleAndDescription)
-            // ->union($descriptionOnly)
+        // ->union($titleAndDescription)
+        // ->union($descriptionOnly)
         ;
-
 
         return $builder->paginate($limit);
     }

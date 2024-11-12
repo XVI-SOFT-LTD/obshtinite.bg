@@ -1,8 +1,8 @@
 <nav class="relative w-full flex-between p-6 px-10">
     <h1 class="text-xl text-mainColor z-10">Общините в България</h1>
     <ul class="hidden lg:flex lg:items-center gap-10 text-lg z-10">
-        <li><a href="#">Начало</a></li>
-        <li><a href="#">Области</a></li>
+        <li><a href="{{ route('homepage') }}">Начало</a></li>
+        <li><a href="{{ route('area.index') }}">Области</a></li>
         <li><a href="#">Новини</a></li>
         <li><a href="#">Партии</a></li>
         <li><a href="#">Забележителности</a></li>

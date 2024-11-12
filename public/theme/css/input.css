@@ -19,7 +19,8 @@
   height: 100%;
 }
 
-.swiper .swiper-button-next, .swiper .swiper-button-prev{
+.swiper .swiper-button-next,
+.swiper .swiper-button-prev {
   background-color: rgba(0, 0, 0, 0.552);
   padding: 30px;
   color: white;
@@ -39,4 +40,31 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+
+.top-bottom-black-gradient {
+  background: rgb(255, 255, 255);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07874868697478987) 0%, rgba(0, 0, 0, 0.3028383228291317) 98%);
+}
+
+.top-bottom-red-gradient {
+  background: rgb(157, 52, 72);
+  background: linear-gradient(180deg, rgba(157, 52, 72, 1) 0%, rgba(111, 40, 53, 1) 98%);
+}
+
+.top-bottom-green-gradient {
+  background: rgb(96, 112, 57);
+  background: linear-gradient(180deg, rgba(96, 112, 57, 1) 0%, rgba(78, 92, 46, 1) 98%);
+}
+
+.oblasti-hover li {
+  transition: .4s;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.oblasti-hover li:hover {
+  transform: skewX(-30deg);
+  background-color: var(--mainRedColor);
 }

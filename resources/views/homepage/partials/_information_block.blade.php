@@ -1,7 +1,7 @@
 <div class="relative">
     <div class="z-10 flex-between p-5">
         <h1 class="uppercase z-10">Информационен блог</h1>
-        <button class="z-10">Виж Повече</button>
+        <button class="z-10">{{ trans('app.viewAll') }}</button>
     </div>
 
     <img src="{{ config('app.paths.img') }}/info-blog.png" class="absolute h-[60px] w-full z-1 top-0" />

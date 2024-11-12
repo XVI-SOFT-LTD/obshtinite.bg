@@ -226,12 +226,13 @@ class Municipality extends Model
      * @param int $onPage The number of municipalities to display per page. Default is 20.
      * @return LengthAwarePaginator Paginated list of municipalities.
      */
-    public function getAllMunicipalitiesHomepagePaging(int $onPage = 20)
+    public function getAllMunicipalitiesHomepage(int $limit = 12)
     {
         return $this->where('active', 1)
             ->orderBy('id', 'desc')
             ->whereNull('deleted_at')
-            ->paginate($onPage);
+            ->take($limit)
+            ->get();
     }
 
     /**

@@ -26,16 +26,15 @@ class HomeController extends Controller
     public function homepage()
     {
         $news = $this->newsModel->getHomepageNews(9);
-        $municipalities = $this->municipalitiesModel->getAllMunicipalitiesHomepagePaging();
-
-        $parties = $this->parliamentaryGroupModel->getAllParliamentaryGroupHomepagePaging();
-        #$landmarks = $this->landmarkModel->getAllLandmarksHomepagePaging();
+        $municipalities = $this->municipalitiesModel->getAllMunicipalitiesHomepage();
+        $parties = $this->parliamentaryGroupModel->getAllParliamentaryGroupHomepage();
+        $landmarks = $this->landmarkModel->getAllLandmarksHomepage();
 
         return view('homepage.homepage')
             ->with('news', $news)
             ->with('municipalities', $municipalities)
             ->with('parties', $parties)
-            #->with('landmarks', $landmarks)
+            ->with('landmarks', $landmarks)
         ;
     }
 }

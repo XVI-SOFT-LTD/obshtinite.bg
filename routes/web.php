@@ -25,6 +25,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'homepage'])->name('homepage');
 
+/* Municipality */
+Route::get('/municipality/{slug}', [MunicipalityController::class, 'show'])->name('municipality.show');
+
 // OLD
 // OLD
 // OLD
@@ -55,9 +58,6 @@ Route::get('/listing/{categoryName}', [PageController::class, 'listCategory'])->
 
 Route::get('/obshtinite/{id}', [PageController::class, 'municipality'])->name('municipality');
 Route::get('/oblasti/{id}', [PageController::class, 'area'])->name('area');
-
-/* Municipality */
-Route::get('/municipality/{slug}-{id}', [MunicipalityController::class, 'show'])->name('municipality.show');
 
 /* Area */
 Route::get('/area/{slug}', [AreaController::class, 'show'])->name('area.show');

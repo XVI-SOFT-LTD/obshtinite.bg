@@ -127,7 +127,7 @@ class Municipality extends Model
      */
     public function getUrl(): string
     {
-        return route('municipality.show', ['slug' => $this->slug, 'id' => $this->id]);
+        return route('municipality.show', ['slug' => $this->slug]);
     }
 
     /* Admin */

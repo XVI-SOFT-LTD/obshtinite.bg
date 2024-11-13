@@ -9,11 +9,15 @@
     ]) !!}
     {{ Form::hidden('formMode', 'create') }}
 
-    <div class="row">
-        <div class="col-md-12">
-            @include('admin.partials._custom_buttons_content')
+    @isset($customButtons)
+        <div class="row">
+            <div class="col-md-12">
+                @include('admin.partials._custom_buttons_content')
+            </div>
         </div>
-    </div>
+        <div class="ln_solid"></div>
+    @endisset
+
     <div class="row">
         <div class="col-md-8">
             @include('admin.partials._languages_tabs', [

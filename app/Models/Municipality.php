@@ -3,20 +3,20 @@
 namespace App\Models;
 
 use App\Helpers\Helper;
-use App\Models\Landmark;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Traits\I18n;
 use App\Models\CustomButton;
-use Illuminate\Http\Request;
+use App\Models\Landmark;
 use App\Models\MunicipalityGallery;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Http\Controllers\Admin\AdminController;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
 
 class Municipality extends Model
 {
@@ -127,10 +127,10 @@ class Municipality extends Model
      */
     public function getUrl(): string
     {
-        return route('municipality.show', ['slug' => $this->slug, 'id' => $this->id]);
+        return route('municipality.show', ['slug' => $this->slug]);
     }
 
-     /* Admin */
+    /* Admin */
     /**
      * Retrieve all municipalities with optional filtering by name.
      *
@@ -210,7 +210,8 @@ class Municipality extends Model
      *
      * @return HasMany
      */
-    public function news() {
+    public function news()
+    {
         return $this->hasMany(News::class);
     }
 
@@ -225,27 +226,26 @@ class Municipality extends Model
      * @param int $onPage The number of municipalities to display per page. Default is 20.
      * @return LengthAwarePaginator Paginated list of municipalities.
      */
-    public function getAllMunicipalitiesHomepagePaging(int $onPage = 20)
+    public function getAllMunicipalitiesHomepage(int $limit = 12)
     {
         return $this->where('active', 1)
-            ->where('updated_at', '<=', date('Y-m-d H:i'))
-            ->orderBy('updated_at', 'desc')
             ->orderBy('id', 'desc')
             ->whereNull('deleted_at')
-            ->paginate($onPage);
+            ->take($limit)
+            ->get();
     }
-    
+
     /**
      * Searches for Municipalities based on a given word.
      * The search is performed in three stages:
      * 1. Search in the 'name' field.
      * 2. Search in the 'description' field.
      * 3. Search in both 'name' and 'description' fields.
-     * 
+     *
      * The search word is first converted from Latin to Cyrillic characters.
      * The search is performed using MySQL's full-text search in BOOLEAN MODE.
      * Results are ordered by the length of the matched field(s) in descending order.
-     * 
+     *
      * @param string $word The search term to look for.
      * @param int $limit The number of results to return per page. Default is 20.
      * @return LengthAwarePaginator Paginated search results.
@@ -272,10 +272,9 @@ class Municipality extends Model
         // });
 
         $builder = $titleOnly
-            // ->union($titleAndDescription)
-            // ->union($descriptionOnly)
+        // ->union($titleAndDescription)
+        // ->union($descriptionOnly)
         ;
-
 
         return $builder->paginate($limit);
     }

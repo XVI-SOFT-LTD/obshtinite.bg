@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Municipality;
 use App\Http\Controllers\Controller;
+use App\Models\Landmark;
+use App\Models\Municipality;
 
 class MunicipalityController extends Controller
 {
     private $municipalitiesModel;
-    
+
     public function __construct()
     {
         $this->municipalitiesModel = new Municipality();
@@ -17,8 +18,13 @@ class MunicipalityController extends Controller
     public function show(string $slug)
     {
         $municipality = $this->municipalitiesModel->where('slug', $slug)->firstOrFail();
-        
-        return view('pages.municipality', compact('municipality'));
+
+        $landmarks = (new Landmark())->getAllLandmarksHomepage();
+
+        return view('municipality.show', [
+            'municipality' => $municipality,
+            'landmarks' => $landmarks,
+        ]);
     }
 
 }

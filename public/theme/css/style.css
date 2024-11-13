@@ -107,3 +107,13 @@
     height: 1px;
     background-color: #3C3C3C;
 }
+
+.parliamentary_group_img {
+    width: 400px;
+    height: 295px;
+    padding: 10px 15px 5px 0px;
+}
+
+.hidden {
+    display: none;
+}

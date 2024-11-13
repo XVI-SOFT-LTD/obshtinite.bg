@@ -2,70 +2,31 @@
 <html class="no-js" lang="{{ app()->getLocale() }}">
 
 <head>
-    @include('layouts.partials._head')
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ env('APP_NAME') }}</title>
+    <link rel="stylesheet" href="{{ config('app.paths.css') }}/style.css" />
+    <link rel="stylesheet" href="{{ config('app.paths.css') }}/output.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="//cdn.tailwindcss.com"></script>
+    <script src="//kit.fontawesome.com/9ce6b7b7c4.js" crossorigin="anonymous"></script>
+
+    @stack('css')
 </head>
 
-<body id="top">
-    @include('layouts.partials._header')
+<body>
+    @include('layouts.partials._nav')
 
-    @include('layouts.partials._header_sliders')
+    @include('layouts.partials._header_slider')
 
-    @include('layouts.partials._information_block')
-
-    @include('layouts.partials._before_footer')
+    @yield('content')
 
     @include('layouts.partials._footer')
 
-    <script>
-        var swiper = new Swiper(".mySwiper", {
-            navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev",
-            },
-        });
-        var swiper = new Swiper(".mySwiperTwo", {
-            spaceBetween: 30,
-            navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev",
-            },
-        });
-        var swiper = new Swiper(".mySwiperThree", {
-            spaceBetween: 30,
-            navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev",
-            },
-        });
-
-        var swiper = new Swiper(".mySwiperFour", {
-            slidesPerView: 1,
-            spaceBetween: 0,
-            pagination: {
-                el: ".swiper-pagination",
-                clickable: true,
-            },
-            breakpoints: {
-                740: {
-                    slidesPerView: 1,
-                    spaceBetween: 0,
-                },
-                900: {
-                    slidesPerView: 2,
-                    spaceBetween: 30,
-                },
-                1200: {
-                    slidesPerView: 3,
-                    spaceBetween: 30,
-                },
-                1550: {
-                    slidesPerView: 5,
-                    spaceBetween: 30,
-                },
-            },
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="{{ config('app.paths.js') }}Swiper.js"></script>
     @stack('scripts')
+
 </body>
 
 </html>

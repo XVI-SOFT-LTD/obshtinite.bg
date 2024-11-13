@@ -2,16 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Area;
 use App\Http\Controllers\Controller;
+use App\Models\Area;
 
 class AreaController extends Controller
 {
     private $areaModel;
-        
+
     public function __construct()
     {
         $this->areaModel = new Area();
+    }
+
+    public function index()
+    {
+        $areas = $this->areaModel->where('active', 1)->with(['municipality.landmarks'])->paginate(12);
+
+        return view('areas.index', [
+            'areas' => $areas,
+        ]);
     }
 
     public function show(string $slug)
@@ -21,13 +30,4 @@ class AreaController extends Controller
         return view('pages.area', compact('area'));
     }
 
-    public function listAllAreas()
-    {
-          // Извличаме всички активни области
-        $areas = $this->areaModel->where('active', 1)->with(['municipality.landmarks'])->get();
-        dd($areas);
-
-        // Връщаме изгледа с предадените области
-        return view('pages.area', compact('areas'));
-    }
 }

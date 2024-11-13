@@ -22,7 +22,7 @@
                     @endif
                 </li>
             @endforeach
-            @if (auth()->user()->id == 1)
+            @if (auth()->user()->id == 3)
                 <li>&nbsp;</li>
                 <li>
                     <a><i class="fa fa-cog"></i> Developer Настройки <span class="fa fa-chevron-down"></span></a>

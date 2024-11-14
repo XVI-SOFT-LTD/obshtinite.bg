@@ -1,3 +1,13 @@
+@include('admin.developer.fields._input', [
+    'label' => 'ID на фирма',
+    'id' => 'company_id',
+    'name' => 'company_id',
+    'required' => false,
+    'value' => old('company_id', $object->company_id ?? null),
+    'hint' => 'Въведете ID на фирма',
+    'line' => true,
+])
+
 @include('admin.developer.fields._social_media_input', [
     'label' => 'Линк',
     'id' => 'url',
@@ -13,7 +23,7 @@
     'label' => 'Позиция',
     'id' => 'position',
     'name' => 'position',
-    'required' => false,
+    'required' => true,
     'value' => old('position', $object->position ?? null),
     'hint' => 'Позицията на участието в списъка',
     'line' => true,
@@ -23,7 +33,7 @@
     'label' => 'Област/Община',
     'placeholder' => 'Изберете Област и Община от списъка',
     'name' => 'areas',
-    'required' => true,
+    'required' => false,
     'items' => $areas,
     'selected' => $selectedAreas,
     'line' => true,
@@ -32,7 +42,7 @@
 @include('admin.developer.fields._tree', [
     'label' => 'Категории',
     'name' => 'categories',
-    'required' => true,
+    'required' => false,
     'items' => $categories,
     'selected' => $selectedCategories,
     'line' => true,

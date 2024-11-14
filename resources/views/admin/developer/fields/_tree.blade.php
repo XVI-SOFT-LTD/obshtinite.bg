@@ -16,8 +16,8 @@
                 <li>
                     <div class="checkbox">
                         <label for="parent_{{ $item->id }}">
-                            <input class="form-check-input" type="checkbox" name="{{ $name }}[]" @isset($item->id) id="parent_{{ $item->id }}" @endisset
-                                value="{{ $item->id }}" @if ((old($name) && in_array($item->id, old($name))) || $mainCategorySelected) checked @endif />
+                            <input class="form-check-input" type="checkbox" name="{{ $name }}[{{ $item->id }}]" @isset($item->id) id="parent_{{ $item->id }}" @endisset
+                                value="" @if ((old($name) && array_key_exists($item->id, old($name))) || $mainCategorySelected) checked @endif />
                             {{ $item->i18n->name }}
                         </label>
                     </div>
@@ -27,8 +27,8 @@
                                 <li>
                                     <div class="checkbox">
                                         <label for="child_{{ $child->id }}">
-                                            <input class="form-check-input" type="checkbox" name="{{ $name }}[]" @isset($child->id) id="child_{{ $child->id }}" @endisset
-                                                value="{{ $child->id }}" @if ((old($name) && in_array($child->id, old($name))) || (isset($selected) && in_array($child->id, $selected))) checked @endif />
+                                            <input class="form-check-input" type="checkbox" name="{{ $name }}[{{ $item->id }}][]" @isset($child->id) id="child_{{ $child->id }}" @endisset
+                                                value="{{ $child->id }}" @if ((old($name) && in_array($child->id, old($name)[$item->id] ?? [])) || (isset($selected) && in_array($child->id, $selected))) checked @endif />
                                             {{ $child->i18n->name }}
                                         </label>
                                     </div>

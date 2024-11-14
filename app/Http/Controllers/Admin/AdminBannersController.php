@@ -10,6 +10,7 @@ use App\Models\BannersCategories;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use App\Models\BannersAreasMunicipalities;
 use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Requests\Admin\AdminBannersRequest;
@@ -99,7 +100,6 @@ class AdminBannersController extends AdminController
         $breadcrumbs[] = ['text' => $title];
 
         $areas = Area::getAreasForSelectAdmin();
-        
         $categories = Category::getCategoriesAdmin();
 
         return view('admin.partials._form_create_custom')
@@ -127,7 +127,6 @@ class AdminBannersController extends AdminController
         $requestData['active_from'] = $requestData['active_from'] ? date('Y-m-d H:i:s', strtotime($requestData['active_from'])) : null;
         $requestData['active_to'] = $requestData['active_to'] ? date('Y-m-d H:i:s', strtotime($requestData['active_to'])) : null;
         $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
-        dd($requestData);
         
         DB::transaction(function () use ($requestData, $request) {
             $banner = $this->model->create($requestData);
@@ -139,11 +138,31 @@ class AdminBannersController extends AdminController
             }
 
             if ($request->has('categories')) {
-                $this->addRelatedCategoriesIds($request->get('categories'), $banner->id);
+                $categories = $request->input('categories', []);
+                $selectedCategories = [];
+
+                foreach ($categories as $parentId => $children) {
+                    if (!$children) {
+                        $selectedCategories[] = (int) $parentId;
+                    } elseif (is_array($children)) {
+                        $selectedCategories[] = (int) $parentId;
+                        foreach ($children as $childId) {
+                            $selectedCategories[] = (int) $childId;
+                        }
+                    }
+                }
+
+                $this->addRelatedCategoriesIds($selectedCategories, $banner->id);
+            }
+
+            if ($request->has('areas')) {
+                $areas = $request->input('areas', []);
+
+                $this->saveAreasAndMunicipalities($banner->id, $areas);
             }
         });
 
-        return redirect()->route($this->routes . '.index')->with('success', 'Успешно добавено ' . $this->singularPageTitle);
+        return redirect()->route($this->routes . '.index')->with('success', 'Успешно добавен ' . $this->singularPageTitle);
     }
 
     /**
@@ -157,7 +176,7 @@ class AdminBannersController extends AdminController
         $banner = $this->model::findOrFail($id);
         $areas = Area::getAreasForSelectAdmin();
         $catogories = Category::getCategoriesAdmin();
-        $selectedAreas = $this->model->getRelatedArea();
+        $selectedAreas = (new BannersAreasMunicipalities())->getRelatedAssoc($id);
         $selectedCategories = (new BannersCategories())->getRelatedAssoc($id);
 
         /* breadcrumbs */
@@ -170,10 +189,11 @@ class AdminBannersController extends AdminController
             ->with('dir', $banner->getDir())
             ->with('size', Banner::MAIN_SIZE)
             ->with('routes', $this->routes)
-            ->with('selectedArea', $selectedAreas)
+            ->with('selectedAreas', $selectedAreas)
             ->with('areas', $areas)
             ->with('selectedCategories', $selectedCategories)
-            ->with('catogories', $catogories);
+            ->with('catogories', $catogories)
+            ->with('pageTitle', $title);
     }
 
      /**
@@ -212,8 +232,32 @@ class AdminBannersController extends AdminController
 
 
             if ($request->has('categories')) {
-                $this->addRelatedCategoriesIds($request->get('categories'), $id);
+                $categories = $request->input('categories', []);
+                $selectedCategories = [];
+
+                foreach ($categories as $parentId => $children) {
+                    if (!$children) {
+                        $selectedCategories[] = (int) $parentId;
+                    } elseif (is_array($children)) {
+                        $selectedCategories[] = (int) $parentId;
+                        foreach ($children as $childId) {
+                            $selectedCategories[] = (int) $childId;
+                        }
+                    }
+                }
+
+                $this->addRelatedCategoriesIds($selectedCategories, $banner->id);
+            } else {
+                BannersCategories::where('banner_id', $banner->id)->delete();
             }
+
+            if ($request->has('areas')) {
+                $areas = $request->input('areas', []);
+
+                $this->saveAreasAndMunicipalities($banner->id, $areas);
+            } else {
+                BannersAreasMunicipalities::where('banner_id', $banner->id)->delete();
+            } 
         });
 
         return redirect()->back()->with('success', 'Успешно редактирано ' . $this->singularPageTitle);
@@ -261,4 +305,38 @@ class AdminBannersController extends AdminController
         }
     }
 
+    /**
+     * Записва областите и общините в базата данни.
+     *
+     * @param int $bannerId ID на банера.
+     * @param array $areas Масив с областите и общините.
+     */
+    protected function saveAreasAndMunicipalities(int $bannerId, array $areas)
+    {
+        BannersAreasMunicipalities::where('banner_id', $bannerId)->delete();
+        
+        foreach ($areas as $areaId => $municipalityIds) {
+            if (!$municipalityIds) {
+                DB::table('banners_areas_municipalities')->insert([
+                    'banner_id' => $bannerId,
+                    'area_id' => $areaId,
+                    'municipality_id' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                            
+            continue;
+            }
+                    
+            foreach ($municipalityIds as $childIdmunicipalityId) {
+                DB::table('banners_areas_municipalities')->insert([
+                    'banner_id' => $bannerId,
+                    'area_id' => $areaId,
+                    'municipality_id' => $childIdmunicipalityId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+    }
 }

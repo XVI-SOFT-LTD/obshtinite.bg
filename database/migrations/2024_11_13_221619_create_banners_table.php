@@ -14,7 +14,7 @@ class CreateBannersTable extends Migration
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
             $table->string('logo', 250)->nullable()->comment('Лого на банера');
-            $table->string('company_id')->comment('ID на компанията');
+            $table->string('company_id')->nullable()->comment('ID на компанията');
             $table->string('url')->nullable()->comment('Хипервръзка на банера');
             $table->integer('position')->unsigned()->nullable()->default(0)->comment('Позиция на банера');
             $table->boolean('homepage')->unsigned()->nullable()->default(0)->comment('Показване на началната страница');

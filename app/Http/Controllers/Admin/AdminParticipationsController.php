@@ -14,7 +14,6 @@ use Illuminate\Contracts\View\Factory;
 use App\Models\ParticipationsCategories;
 use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\DynamicAdminDataTable;
 use App\Http\Requests\Admin\AdminParticipationsRequest;
 
 class AdminParticipationsController extends AdminController
@@ -153,7 +152,21 @@ class AdminParticipationsController extends AdminController
             }
 
             if ($request->has('categories')) {
-                $this->addRelatedCategoriesIds($request->get('categories'), $participation->id);
+                $categories = $request->input('categories', []);
+                $selectedCategories = [];
+
+                foreach ($categories as $parentId => $children) {
+                    if (!$children) {
+                        $selectedCategories[] = (int) $parentId;
+                    } elseif (is_array($children)) {
+                        $selectedCategories[] = (int) $parentId;
+                        foreach ($children as $childId) {
+                            $selectedCategories[] = (int) $childId;
+                        }
+                    }
+                }
+                
+                $this->addRelatedCategoriesIds($selectedCategories, $participation->id);
             }
         });
 
@@ -244,7 +257,22 @@ class AdminParticipationsController extends AdminController
             }
 
             if ($request->has('categories')) {
-                $this->addRelatedCategoriesIds($request->get('categories'), $id);
+                $categories = $request->input('categories', []);
+                $selectedCategories = [];
+
+                foreach ($categories as $parentId => $children) {
+                    if (!$children) {
+                        $selectedCategories[] = (int) $parentId;
+                    } elseif (is_array($children)) {
+                        $selectedCategories[] = (int) $parentId;
+                        foreach ($children as $childId) {
+                            $selectedCategories[] = (int) $childId;
+                        }
+                    }
+                }
+                $this->addRelatedCategoriesIds($selectedCategories, $id);
+            } else {
+                ParticipationsCategories::where('participation_id', $id)->delete();
             }
         });
 

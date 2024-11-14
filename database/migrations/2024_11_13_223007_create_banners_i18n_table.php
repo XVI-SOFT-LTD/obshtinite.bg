@@ -18,7 +18,8 @@ class CreateBannersI18nTable extends Migration
             $table->string('name')->comment('Име на банера');
             $table->json('keywords')->nullable()->comment('Ключови думи на банера');
             $table->timestamps();
-
+            $table->softDeletes();
+            
             $table->foreign('language_id')->references('id')->on('languages')->onDelete('cascade');
             $table->foreign('banner_id')->references('id')->on('banners')->onDelete('cascade');
         });

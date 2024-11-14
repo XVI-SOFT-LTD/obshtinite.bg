@@ -15,7 +15,7 @@ class CreateBannersAreasMunicipalitiesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('banner_id')->onDelete('cascade')->comment('ID на банера');
             $table->unsignedBigInteger('area_id')->onDelete('cascade')->comment('ID на областта');
-            $table->unsignedBigInteger('municipality_id')->onDelete('cascade')->comment('ID на общината');
+            $table->unsignedBigInteger('municipality_id')->nullable()->onDelete('cascade')->comment('ID на общината');
             $table->timestamps();
             $table->softDeletes();
         });

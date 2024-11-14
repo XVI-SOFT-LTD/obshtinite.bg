@@ -8,9 +8,11 @@ use App\Http\Controllers\Admin\AdminNewsController;
 use App\Http\Controllers\Admin\DeveloperController;
 use App\Http\Controllers\Admin\AdminAreasController;
 use App\Http\Controllers\Admin\AdminAuthorController;
+use App\Http\Controllers\Admin\AdminBannersController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminLandmarksController;
 use App\Http\Controllers\Admin\AdminStaticPageController;
+use App\Http\Controllers\Admin\AdminMegaBannersController;
 use App\Http\Controllers\Admin\AdminMunicipalitiesController;
 use App\Http\Controllers\Admin\AdminParticipationsController;
 use App\Http\Controllers\Admin\AdminParliamentaryGroupController;
@@ -32,8 +34,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::delete('/categories/destroy/{id}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 
     /* Books */
-    Route::resource('news', AdminNewsController::class)->except(['show', 'update']);
-    Route::put('news/{id}', [AdminNewsController::class, 'update'])->name('news.update');
+    // Route::resource('news', AdminNewsController::class)->except(['show', 'update']);
+    // Route::put('news/{id}', [AdminNewsController::class, 'update'])->name('news.update');
 
     /* Pages */
     Route::resource('pages', AdminStaticPageController::class)->except(['show', 'update']);
@@ -69,6 +71,13 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
 
     Route::get('/news/ajax/search/{word?}', [AdminAjaxController::class, 'searchNews']);
 
+    /* Mega banners */
+    Route::resource('mega-banners', AdminMegaBannersController::class)->except(['show', 'update']);
+    Route::put('mega-banners/{id}', [AdminMegaBannersController::class, 'update'])->name('mega-banners.update');
+
+    /* Banners */
+    Route::resource('banners', AdminBannersController::class)->except(['show', 'update']);
+    Route::put('banners/{id}', [AdminBannersController::class, 'update'])->name('banners.update');
     /*
      * SUPER ADMIN URLs
      */

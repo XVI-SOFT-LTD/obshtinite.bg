@@ -3,36 +3,35 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Area;
-use App\Helpers\Helper;
+use App\Models\Banner;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use App\Models\Participation;
+use App\Models\BannersCategories;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Contracts\View\Factory;
-use App\Models\ParticipationsCategories;
+use App\Models\BannersAreasMunicipalities;
 use App\Http\Controllers\Admin\AdminDataTable;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Requests\Admin\AdminParticipationsRequest;
+use App\Http\Requests\Admin\AdminBannersRequest;
 
-class AdminParticipationsController extends AdminController
+class AdminBannersController extends AdminController
 {
-    protected $routes = 'participations';
+    protected $routes = 'banners';
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->singularPageTitle = 'участие';
-        $this->pluralPageTitle = 'участия';
+        $this->singularPageTitle = 'банер';
+        $this->pluralPageTitle = 'банери';
 
-        $this->i18nTable = 'participations_i18n';
+        $this->i18nTable = 'banners_i18n';
 
-        $this->model = new Participation();
+        $this->model = new Banner();
 
         $this->basicBreadcrumbs = [
-            ['text' => 'Списък участия', 'url' => route($this->routes . '.index')],
+            ['text' => 'Списък банери', 'url' => route($this->routes . '.index')],
         ];
     }
 
@@ -44,40 +43,40 @@ class AdminParticipationsController extends AdminController
      */
     public function index(Request $request)
     {
-        $participations = $this->model->getAdminAll($request);
+        $banners = $this->model->getAdminAll($request);
 
         $dataTable = new AdminDataTable();
-        $dataTable->setPaginator($participations);
+        $dataTable->setPaginator($banners);
         $dataTable->setRoute($this->routes);
         $dataTable->setColumns([
-            'fullname' => 'Име на участието',
+            'fullname' => 'Име на Банера',
             'logo' => 'Снимка',
-            'area' => 'Област',
             'category' => 'Категория',
             'active' => 'Активна',
+            'homepage' => 'Показване на начална страница',
             'created_at' => 'Създадена на',
             'updated_at' => 'Променена на',
         ]);
             
-        $dataTable->setRows($participations, [
-            'name' => function ($participations) {
-                return $participations->i18n->name;
+        $dataTable->setRows($banners, [
+            'name' => function ($banners) {
+                return $banners->i18n->name;
             },
-            'logo' => function ($participations) {
-                return '<img src="' . $participations->getLogo() . '" class="img-thumbnail" style="max-height: 40px;">';
+            'logo' => function ($banners) {
+                return '<img src="' . $banners->getLogo() . '" class="img-thumbnail" style="max-height: 40px;">';
             },
-            'area' => function ($participations) {
-                return $participations->area->i18n->name;
-            },
-            'category' => function ($participations) {
+            'category' => function ($banners) {
                 $categoryNames = [];
-                foreach ($participations->categories as $category) {
+                foreach ($banners->categories as $category) {
                     $categoryNames[] = $category->i18n->name;
                 }
                 return implode(', ', $categoryNames);
             },
-            'active' => function ($participations) {
-                return $participations->active ? 'Да' : 'Не';
+            'homepage' => function ($banners) {
+                return $banners->homepage ? 'Да' : 'Не';
+            },
+            'active' => function ($banners) {
+                return $banners->active ? 'Да' : 'Не';
             },
             'created_at',
             'updated_at',
@@ -89,7 +88,7 @@ class AdminParticipationsController extends AdminController
     }
 
     /**
-     * Create a new participation.
+     * Create a new banner.
      *
      * @return Factory|View
      */
@@ -106,7 +105,7 @@ class AdminParticipationsController extends AdminController
         return view('admin.partials._form_create_custom')
             ->with('routes', $this->routes)
             ->with('breadcrumbs', $breadcrumbs)
-            ->with('selectedArea', '')
+            ->with('selectedAreas', [])
             ->with('selectedCategories', [])
             ->with('areas', $areas)
             ->with('categories', $categories)
@@ -116,39 +115,26 @@ class AdminParticipationsController extends AdminController
     /**
      * Store a newly created resource in storage.
      *
-     * @param AdminParticipationsRequest $request The request object.
+     * @param AdminBannersRequest $request The request object.
      * @return RedirectResponse The redirect response.
      */
-    public function store(AdminParticipationsRequest $request)
+    public function store(AdminBannersRequest $request)
     {
         $requestData = $request->all();
         $requestData['created_by'] = auth()->user()->id;
         $requestData['updated_by'] = auth()->user()->id;
 
-        $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
         $requestData['active_from'] = $requestData['active_from'] ? date('Y-m-d H:i:s', strtotime($requestData['active_from'])) : null;
         $requestData['active_to'] = $requestData['active_to'] ? date('Y-m-d H:i:s', strtotime($requestData['active_to'])) : null;
         $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
-        $requestData['area_id'] = (int) $requestData['area_id'];
         
         DB::transaction(function () use ($requestData, $request) {
-            $participation = $this->model->create($requestData);
-            $this->insertI18n($participation->id, 'participation_id', $this->i18nTable, $requestData['i18n']);
+            $banner = $this->model->create($requestData);
+            $this->insertI18n($banner->id, 'banner_id', $this->i18nTable, $requestData['i18n']);
 
             if ($request->hasFile('logo')) {
-                $logo = $this->uploadImage($request->file('logo'), $participation->id, Participation::DIR, Participation::SIZES);
-                DB::table('participations')->where('id', $participation->id)->update(['logo' => $logo]);
-            }
-
-            if ($request->hasFile('gallery')) {
-                $this->uploadGallery(
-                    $request->file('gallery'),
-                    $participation->id,
-                    'participations_gallery',
-                    'participation_id',
-                    Participation::DIR_GALLERY,
-                    Participation::SIZES_GALLERY
-                );
+                $logo = $this->uploadImage($request->file('logo'), $banner->id, Banner::DIR, Banner::SIZES);
+                DB::table('banners')->where('id', $banner->id)->update(['logo' => $logo]);
             }
 
             if ($request->has('categories')) {
@@ -165,27 +151,33 @@ class AdminParticipationsController extends AdminController
                         }
                     }
                 }
-                
-                $this->addRelatedCategoriesIds($selectedCategories, $participation->id);
+
+                $this->addRelatedCategoriesIds($selectedCategories, $banner->id);
+            }
+
+            if ($request->has('areas')) {
+                $areas = $request->input('areas', []);
+
+                $this->saveAreasAndMunicipalities($banner->id, $areas);
             }
         });
 
-        return redirect()->route($this->routes . '.index')->with('success', 'Успешно добавено ' . $this->singularPageTitle);
+        return redirect()->route($this->routes . '.index')->with('success', 'Успешно добавен ' . $this->singularPageTitle);
     }
 
     /**
-     * Edit a municipality.
+     * Edit a banner.
      *
-     * @param int $id The ID of the municipality to edit.
-     * @return View The view for editing the municipality.
+     * @param int $id The ID of the banner to edit.
+     * @return View The view for editing the banner.
      */
     public function edit(int $id): View
     {
-        $participation = $this->model::findOrFail($id);
+        $banner = $this->model::findOrFail($id);
         $areas = Area::getAreasForSelectAdmin();
         $catogories = Category::getCategoriesAdmin();
-        $selectedArea = $this->model->getRelatedArea();
-        $selectedCategories = (new ParticipationsCategories())->getRelatedAssoc($id);
+        $selectedAreas = (new BannersAreasMunicipalities())->getRelatedAssoc($id);
+        $selectedCategories = (new BannersCategories())->getRelatedAssoc($id);
 
         /* breadcrumbs */
         $title = 'Редакция на ' . $this->singularPageTitle;
@@ -193,25 +185,25 @@ class AdminParticipationsController extends AdminController
         $breadcrumbs[] = ['text' => $title];
 
         return view('admin.partials._form_edit_custom')
-            ->with('object', $participation)
-            ->with('dir', $participation->getDir())
-            ->with('size', Participation::MAIN_SIZE)
+            ->with('object', $banner)
+            ->with('dir', $banner->getDir())
+            ->with('size', Banner::MAIN_SIZE)
             ->with('routes', $this->routes)
-            ->with('selectedArea', $selectedArea)
+            ->with('selectedAreas', $selectedAreas)
             ->with('areas', $areas)
             ->with('selectedCategories', $selectedCategories)
             ->with('catogories', $catogories)
             ->with('pageTitle', $title);
     }
 
-    /**
+     /**
      * Update a participation.
      *
      * @param AdminParticipationsRequest $request The request object.
      * @param int $id The ID of the participation to update.
      * @return RedirectResponse The redirect response.
      */
-    public function update(AdminParticipationsRequest $request, int $id): RedirectResponse
+    public function update(AdminBannersRequest $request, int $id): RedirectResponse
     {
         if (!$id) {
             return redirect()->back();
@@ -220,41 +212,24 @@ class AdminParticipationsController extends AdminController
         
         $requestData = $request->all();
         $requestData['updated_by'] = auth()->user()->id;
-        $requestData['slug'] = Helper::strSlug($requestData['i18n'][1]['name']);
         $requestData['active_from'] = $requestData['active_from'] ? date('Y-m-d H:i:s', strtotime($requestData['active_from'])) : null;
         $requestData['active_to'] = $requestData['active_to'] ? date('Y-m-d H:i:s', strtotime($requestData['active_to'])) : null;
         $requestData['i18n'][1]['keywords'] = json_encode($requestData['i18n'][1]['keywords']);
-        $requestData['area_id'] = (int) $requestData['area_id'];
         
         if ($request->has('delete_logo')) {
             $requestData['logo'] = null;
         }
 
-        if ($request->has('delete_gallery')) {
-            DB::table('participations_gallery')->whereIn('id', $request->get('delete_gallery'))->update(['deleted_at' => now()]);
-            $requestData['gallery'] = null;
-        }
-
         if ($request->hasFile('logo')) {
-            $requestData['logo'] = $this->uploadImage($request->file('logo'), $id, Participation::DIR, Participation::SIZES);
+            $requestData['logo'] = $this->uploadImage($request->file('logo'), $id, Banner::DIR, Banner::SIZES);
         }
         
         DB::transaction(function () use ($requestData, $request, $id) {
-            $participation = $this->model->findOrFail($id);
-            $participation->update($requestData);
+            $banner = $this->model->findOrFail($id);
+            $banner->update($requestData);
 
-            $this->updateI18n($id, 'participation_id', $this->i18nTable, $requestData['i18n']);
+            $this->updateI18n($id, 'banner_id', $this->i18nTable, $requestData['i18n']);
 
-            if ($request->hasFile('gallery')) {
-                $this->uploadGallery(
-                    $request->file('gallery'),
-                    $participation->id,
-                    'participations_gallery',
-                    'participation_id',
-                    Participation::DIR_GALLERY,
-                    Participation::SIZES_GALLERY
-                );
-            }
 
             if ($request->has('categories')) {
                 $categories = $request->input('categories', []);
@@ -270,16 +245,26 @@ class AdminParticipationsController extends AdminController
                         }
                     }
                 }
-                $this->addRelatedCategoriesIds($selectedCategories, $id);
+
+                $this->addRelatedCategoriesIds($selectedCategories, $banner->id);
             } else {
-                ParticipationsCategories::where('participation_id', $id)->delete();
+                BannersCategories::where('banner_id', $banner->id)->delete();
             }
+
+            if ($request->has('areas')) {
+                $areas = $request->input('areas', []);
+
+                $this->saveAreasAndMunicipalities($banner->id, $areas);
+            } else {
+                BannersAreasMunicipalities::where('banner_id', $banner->id)->delete();
+            } 
         });
 
         return redirect()->back()->with('success', 'Успешно редактирано ' . $this->singularPageTitle);
     }
 
-    /**
+
+     /**
      * Delete a record from the database.
      *
      * @param int $id The ID of the record to be deleted.
@@ -296,28 +281,62 @@ class AdminParticipationsController extends AdminController
         }
     }
 
-    
     /**
-     * Add related category IDs to a participation.
+     * Add related category IDs to a banner.
      *
-     * This method first deletes any existing category associations for the given participation ID.
+     * This method first deletes any existing category associations for the given banner ID.
      * Then, it inserts new records for each category ID provided in the $categoriesIds array.
      *
-     * @param array $categoriesIds An array of category IDs to be associated with the participation.
-     * @param int $participationId The ID of the participation to which the categories will be associated.
+     * @param array $categoriesIds An array of category IDs to be associated with the banner.
+     * @param int $bannerId The ID of the banner to which the categories will be associated.
      * @return void
      */
-    public function addRelatedCategoriesIds(array $categoriesIds, int $participationId): void
+    public function addRelatedCategoriesIds(array $categoriesIds, int $bannerId): void
     {
-        ParticipationsCategories::where('participation_id', $participationId)->delete();
+        BannersCategories::where('banner_id', $bannerId)->delete();
 
         foreach ($categoriesIds as $categoryId) {
-            ParticipationsCategories::insert([
-                'participation_id' => $participationId,
+            BannersCategories::insert([
+                'banner_id' => $bannerId,
                 'category_id' => $categoryId,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+        }
+    }
+
+    /**
+     * Записва областите и общините в базата данни.
+     *
+     * @param int $bannerId ID на банера.
+     * @param array $areas Масив с областите и общините.
+     */
+    protected function saveAreasAndMunicipalities(int $bannerId, array $areas)
+    {
+        BannersAreasMunicipalities::where('banner_id', $bannerId)->delete();
+        
+        foreach ($areas as $areaId => $municipalityIds) {
+            if (!$municipalityIds) {
+                DB::table('banners_areas_municipalities')->insert([
+                    'banner_id' => $bannerId,
+                    'area_id' => $areaId,
+                    'municipality_id' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                            
+            continue;
+            }
+                    
+            foreach ($municipalityIds as $childIdmunicipalityId) {
+                DB::table('banners_areas_municipalities')->insert([
+                    'banner_id' => $bannerId,
+                    'area_id' => $areaId,
+                    'municipality_id' => $childIdmunicipalityId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
     }
 }

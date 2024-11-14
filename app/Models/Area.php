@@ -149,12 +149,28 @@ class Area extends Model
             ->get();
     }
 
+    /* ADMIN */
+    public static function getCategoriesAdmin()
+    {
+        return self::with([
+            'municipality.i18n',
+            'i18n',
+        ])
+            ->orderBy('id', 'asc')
+            ->get();
+    }
+
     /**
      * Get the municipalities for the area
      *
      * @return HasMany
      */
     public function municipality(): HasMany
+    {
+        return $this->hasMany(Municipality::class);
+    }
+
+    public function childs(): HasMany
     {
         return $this->hasMany(Municipality::class);
     }

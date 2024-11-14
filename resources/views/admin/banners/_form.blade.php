@@ -2,7 +2,7 @@
     'label' => 'ID на фирма',
     'id' => 'company_id',
     'name' => 'company_id',
-    'required' => false,
+    'required' => true,
     'value' => old('company_id', $object->company_id ?? null),
     'hint' => 'Въведете ID на фирма',
     'line' => true,

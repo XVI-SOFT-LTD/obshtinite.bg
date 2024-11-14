@@ -16,7 +16,7 @@ class AdminBannersRequest extends AdminFormRequest
             'i18n.1.keywords' => 'required',
             'position' => 'nullable|numeric',
             'url' => 'nullable|url',
-            'company_id' => 'max:255',
+            'company_id' => 'required|max:255',
             'areas' => 'nullable|array',
             'categories' => 'nullable|array',
         ];
@@ -34,7 +34,7 @@ class AdminBannersRequest extends AdminFormRequest
             'i18n.1.keywords' => 'Ключови думи (bg)',
             'position' => 'Позиция',
             'url' => 'URL',
-            'company_id' => 'Фирма',
+            'company_id' => 'ID на Фирмата',
             'areas' => 'Области/Общини',
             'categories' => 'Категории',
         ];
